@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.constants;
 
-import com.optmizer.summonerwaroptimizer.model.Attribute;
-import com.optmizer.summonerwaroptimizer.model.RuneSet;
+import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 
 import java.util.Map;
 

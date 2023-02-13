@@ -1,8 +1,8 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
-import com.optmizer.summonerwaroptimizer.model.Attribute;
-import com.optmizer.summonerwaroptimizer.model.PrefixStat;
-import com.optmizer.summonerwaroptimizer.model.SubStat;
+import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.PrefixStat;
+import com.optmizer.summonerwaroptimizer.model.rune.SubStat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

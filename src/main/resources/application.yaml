@@ -6,3 +6,28 @@ spring:
     driverClassName: org.h2.Driver
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+buildStrategies:
+  - monster: 7400575165
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 100
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+  - monster: 13761642597
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 200
+  - monster: 15892716512
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+  - monster: 17280366373
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE

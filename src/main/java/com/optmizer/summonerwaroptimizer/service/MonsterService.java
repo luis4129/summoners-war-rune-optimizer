@@ -1,6 +1,6 @@
 package com.optmizer.summonerwaroptimizer.service;
 
-import com.optmizer.summonerwaroptimizer.model.Monster;
+import com.optmizer.summonerwaroptimizer.model.monster.Monster;
 import com.optmizer.summonerwaroptimizer.repository.MonsterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +14,10 @@ public class MonsterService {
 
     @Autowired
     private MonsterRepository monsterRepository;
+
+    public Monster findBySwarfarmId(Long swarfarmId) {
+        return monsterRepository.findBySwarfarmId(swarfarmId);
+    }
 
     public List<Monster> findAll() {
         return monsterRepository.findAll();

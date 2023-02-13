@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
-import com.optmizer.summonerwaroptimizer.model.Rune;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmRune;
+import com.optmizer.summonerwaroptimizer.model.rune.Rune;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

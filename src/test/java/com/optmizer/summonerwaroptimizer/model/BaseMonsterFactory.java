@@ -1,5 +1,7 @@
 package com.optmizer.summonerwaroptimizer.model;
 
+import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
+
 import java.util.List;
 
 public class BaseMonsterFactory {

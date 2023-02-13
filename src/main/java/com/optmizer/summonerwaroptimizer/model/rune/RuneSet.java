@@ -1,4 +1,4 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.rune;
 
 public enum RuneSet {
 

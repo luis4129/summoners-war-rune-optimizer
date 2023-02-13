@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
 import com.optmizer.summonerwaroptimizer.exception.UnmappedAttributeConversionException;
-import com.optmizer.summonerwaroptimizer.model.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

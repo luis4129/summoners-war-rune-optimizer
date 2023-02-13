@@ -1,6 +1,6 @@
 package com.optmizer.summonerwaroptimizer.repository;
 
-import com.optmizer.summonerwaroptimizer.model.BaseMonster;
+import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

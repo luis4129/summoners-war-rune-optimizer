@@ -1,6 +1,6 @@
 package com.optmizer.summonerwaroptimizer.resource;
 
-import com.optmizer.summonerwaroptimizer.model.Rune;
+import com.optmizer.summonerwaroptimizer.model.rune.Rune;
 import com.optmizer.summonerwaroptimizer.service.RuneService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

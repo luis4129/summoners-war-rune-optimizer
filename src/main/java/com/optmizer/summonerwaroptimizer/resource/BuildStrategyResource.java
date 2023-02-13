@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.resource;
 
-import com.optmizer.summonerwaroptimizer.model.monster.Monster;
-import com.optmizer.summonerwaroptimizer.service.MonsterService;
+import com.optmizer.summonerwaroptimizer.model.build.BuildStrategy;
+import com.optmizer.summonerwaroptimizer.service.BuildStrategyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,15 +10,15 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("monsters")
-public class MonsterResource {
+@RequestMapping("strategies")
+public class BuildStrategyResource {
 
     @Autowired
-    private MonsterService monsterService;
+    private BuildStrategyService buildStrategyService;
 
     @GetMapping
-    public List<Monster> findAll() {
-        return monsterService.findAll();
+    public List<BuildStrategy> findAll() {
+        return buildStrategyService.findAll();
     }
 
 }

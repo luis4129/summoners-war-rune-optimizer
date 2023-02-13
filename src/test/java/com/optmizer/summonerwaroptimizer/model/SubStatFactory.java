@@ -1,5 +1,8 @@
 package com.optmizer.summonerwaroptimizer.model;
 
+import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.SubStat;
+
 import java.util.List;
 
 public class SubStatFactory {

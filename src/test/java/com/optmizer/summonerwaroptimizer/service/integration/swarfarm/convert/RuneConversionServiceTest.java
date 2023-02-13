@@ -1,10 +1,10 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
-import com.optmizer.summonerwaroptimizer.model.Attribute;
 import com.optmizer.summonerwaroptimizer.model.PrefixStatFactory;
-import com.optmizer.summonerwaroptimizer.model.RuneSet;
 import com.optmizer.summonerwaroptimizer.model.SubStatFactory;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmRuneFactory;
+import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
