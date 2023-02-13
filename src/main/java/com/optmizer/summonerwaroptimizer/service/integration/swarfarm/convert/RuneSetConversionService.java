@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
 import com.optmizer.summonerwaroptimizer.exception.UnmappedRuneSetConversionException;
-import com.optmizer.summonerwaroptimizer.model.RuneSet;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;

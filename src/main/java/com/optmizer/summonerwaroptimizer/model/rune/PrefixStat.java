@@ -1,4 +1,4 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.rune;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;

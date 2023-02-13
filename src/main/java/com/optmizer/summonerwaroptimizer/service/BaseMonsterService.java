@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service;
 
 import com.optmizer.summonerwaroptimizer.exception.BaseMonsterNotFoundException;
-import com.optmizer.summonerwaroptimizer.model.BaseMonster;
+import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
 import com.optmizer.summonerwaroptimizer.repository.BaseMonsterRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

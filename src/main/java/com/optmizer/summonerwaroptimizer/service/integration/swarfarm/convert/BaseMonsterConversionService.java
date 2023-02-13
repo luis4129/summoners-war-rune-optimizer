@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
-import com.optmizer.summonerwaroptimizer.model.BaseMonster;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmBaseMonster;
+import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

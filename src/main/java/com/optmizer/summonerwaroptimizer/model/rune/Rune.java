@@ -1,6 +1,7 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.rune;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.optmizer.summonerwaroptimizer.model.monster.Monster;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

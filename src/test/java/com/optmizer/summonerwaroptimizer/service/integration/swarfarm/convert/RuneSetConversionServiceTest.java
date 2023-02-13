@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
 import com.optmizer.summonerwaroptimizer.exception.UnmappedRuneSetConversionException;
-import com.optmizer.summonerwaroptimizer.model.RuneSet;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

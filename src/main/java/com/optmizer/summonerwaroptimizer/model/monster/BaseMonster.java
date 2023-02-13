@@ -1,4 +1,4 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.monster;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Entity;

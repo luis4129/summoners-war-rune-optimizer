@@ -1,5 +1,6 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.monster;
 
+import com.optmizer.summonerwaroptimizer.model.rune.Rune;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

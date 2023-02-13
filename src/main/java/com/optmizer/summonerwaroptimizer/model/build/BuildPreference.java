@@ -1,4 +1,4 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.build;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -12,22 +12,18 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SubStat {
+public class BuildPreference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long id;
 
     @ManyToOne
     @JsonIgnore
-    private Rune rune;
+    private BuildStrategy buildStrategy;
+    
+    private BuildAttribute attribute;
+    private Integer minimumValue;
 
-    @Column(name = "stat_value")
-    private Integer value;
-
-    private Attribute attribute;
-    private Integer grindValue;
-    private boolean enchanted;
 
 }

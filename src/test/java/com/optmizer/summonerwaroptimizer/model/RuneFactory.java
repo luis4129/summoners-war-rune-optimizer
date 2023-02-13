@@ -1,5 +1,9 @@
 package com.optmizer.summonerwaroptimizer.model;
 
+import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.Rune;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
+
 import java.util.List;
 
 public class RuneFactory {

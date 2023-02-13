@@ -18,9 +18,13 @@ public class InitializeDatabase implements ApplicationListener<ApplicationReadyE
     @Autowired
     private AccountImportService accountImportService;
 
+    @Autowired
+    private BuildStrategyInitializeService buildStrategyInitializeService;
+
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         baseMonsterImportService.importBestiaryData();
         accountImportService.importAccountData();
+        buildStrategyInitializeService.initializeBuildStrategies();
     }
 }
