@@ -1,6 +1,6 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.constants;
 
-import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 
 import java.util.Map;
@@ -16,25 +16,25 @@ public class SwarfarmConstants {
     public static final String BESTIARY_DATA_FILE = "src\\main\\resources\\swarfarm\\bestiary_data.json";
     public static final Integer ATTRIBUTE_INDEX = 0;
     public static final Integer VALUE_INDEX = 1;
-    public static final Integer GRIND_VALUE_INDEX = 2;
-    public static final Integer IS_ENCHANTED_INDEX = 3;
+    public static final Integer IS_ENCHANTED_INDEX = 2;
+    public static final Integer GRIND_VALUE_INDEX = 3;
     public static final Integer EMPTY_STAT = 0;
-    public static final Map<Integer, Attribute> SWARFARM_ATTRIBUTE_CONVERSION_MAP = buildAttributeConversionMap();
+    public static final Map<Integer, BonusAttribute> SWARFARM_ATTRIBUTE_CONVERSION_MAP = buildAttributeConversionMap();
     public static final Map<Integer, RuneSet> SWARFARM_RUNE_SET_CONVERSION_MAP = buildRuneSetConversionMap();
 
-    private static Map<Integer, Attribute> buildAttributeConversionMap() {
+    private static Map<Integer, BonusAttribute> buildAttributeConversionMap() {
         return Map.ofEntries(
-            entry(1, Attribute.FLAT_HIT_POINTS),
-            entry(2, Attribute.HIT_POINTS),
-            entry(3, Attribute.FLAT_ATTACK),
-            entry(4, Attribute.ATTACK),
-            entry(5, Attribute.FLAT_DEFENSE),
-            entry(6, Attribute.DEFENSE),
-            entry(8, Attribute.SPEED),
-            entry(9, Attribute.CRITICAl_RATE),
-            entry(10, Attribute.CRITICAL_DAMAGE),
-            entry(11, Attribute.RESISTANCE),
-            entry(12, Attribute.ACCURACY));
+            entry(1, BonusAttribute.FLAT_HIT_POINTS),
+            entry(2, BonusAttribute.HIT_POINTS),
+            entry(3, BonusAttribute.FLAT_ATTACK),
+            entry(4, BonusAttribute.ATTACK),
+            entry(5, BonusAttribute.FLAT_DEFENSE),
+            entry(6, BonusAttribute.DEFENSE),
+            entry(8, BonusAttribute.SPEED),
+            entry(9, BonusAttribute.CRITICAl_RATE),
+            entry(10, BonusAttribute.CRITICAL_DAMAGE),
+            entry(11, BonusAttribute.RESISTANCE),
+            entry(12, BonusAttribute.ACCURACY));
     }
 
     private static Map<Integer, RuneSet> buildRuneSetConversionMap() {

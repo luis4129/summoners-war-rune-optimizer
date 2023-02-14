@@ -23,8 +23,6 @@ public class BuildStrategyInitializeService {
     @Autowired
     private YamlConfig yamlConfig;
 
-    private static final Long VERDEHILE_ID = 7400575165L;
-
     public void initializeBuildStrategies() {
         var buildStrategies = toBuildStrategies(yamlConfig.getBuildStrategies());
 
@@ -42,7 +40,7 @@ public class BuildStrategyInitializeService {
         var buildPreferences = config.getBuildPreferences();
 
         var buildStrategy = BuildStrategy.builder()
-            .monster(monsterService.findBySwarfarmId(config.getMonster()))
+            .monster(monsterService.getBySwarmFarmId(config.getMonster()))
             .runeSets(config.getRuneSets())
             .buildPreferences(buildPreferences)
             .build();

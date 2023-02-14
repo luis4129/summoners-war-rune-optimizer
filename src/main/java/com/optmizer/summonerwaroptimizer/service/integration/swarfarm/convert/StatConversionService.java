@@ -1,6 +1,6 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
-import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.MainStat;
 import com.optmizer.summonerwaroptimizer.model.rune.PrefixStat;
 import com.optmizer.summonerwaroptimizer.model.rune.SubStat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,8 +18,11 @@ public class StatConversionService {
     @Autowired
     private AttributeConversionService attributeConversionService;
 
-    public Attribute toMainStat(List<Integer> primaryEffect) {
-        return attributeConversionService.toAttribute(primaryEffect.get(ATTRIBUTE_INDEX));
+    public MainStat toMainStat(List<Integer> primaryEffect) {
+        return MainStat.builder()
+            .bonusAttribute(attributeConversionService.toAttribute(primaryEffect.get(ATTRIBUTE_INDEX)))
+            .value(primaryEffect.get(VALUE_INDEX))
+            .build();
     }
 
     public PrefixStat toPrefixStat(List<Integer> prefixEffect) {
@@ -27,7 +30,7 @@ public class StatConversionService {
             return null;
 
         return PrefixStat.builder()
-            .attribute(attributeConversionService.toAttribute(prefixEffect.get(ATTRIBUTE_INDEX)))
+            .bonusAttribute(attributeConversionService.toAttribute(prefixEffect.get(ATTRIBUTE_INDEX)))
             .value(prefixEffect.get(VALUE_INDEX))
             .build();
     }
@@ -45,10 +48,10 @@ public class StatConversionService {
             return null;
 
         return SubStat.builder()
-            .attribute(attributeConversionService.toAttribute(secondaryEffect.get(ATTRIBUTE_INDEX)))
+            .bonusAttribute(attributeConversionService.toAttribute(secondaryEffect.get(ATTRIBUTE_INDEX)))
             .value(secondaryEffect.get(VALUE_INDEX))
-            .grindValue(secondaryEffect.get(GRIND_VALUE_INDEX))
             .enchanted(secondaryEffect.get(IS_ENCHANTED_INDEX) == 1)
+            .grindValue(secondaryEffect.get(GRIND_VALUE_INDEX))
             .build();
     }
 

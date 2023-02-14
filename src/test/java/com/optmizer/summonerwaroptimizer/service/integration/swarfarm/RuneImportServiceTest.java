@@ -1,8 +1,8 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm;
 
 import com.optmizer.summonerwaroptimizer.exception.DatabaseIntegrationException;
-import com.optmizer.summonerwaroptimizer.model.RuneFactory;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmRuneFactory;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneFactory;
 import com.optmizer.summonerwaroptimizer.service.RuneService;
 import com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert.RuneConversionService;
 import org.hibernate.exception.ConstraintViolationException;

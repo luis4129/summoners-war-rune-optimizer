@@ -6,7 +6,7 @@ import com.optmizer.summonerwaroptimizer.exception.AccountDataNotFoundException;
 import com.optmizer.summonerwaroptimizer.exception.AccountImportIntegrationException;
 import com.optmizer.summonerwaroptimizer.exception.UnmappedAttributeConversionException;
 import com.optmizer.summonerwaroptimizer.exception.UnmappedRuneSetConversionException;
-import com.optmizer.summonerwaroptimizer.model.FileFactory;
+import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.FileFactory;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmAccount;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmAccountFactory;
 import org.hibernate.exception.ConstraintViolationException;

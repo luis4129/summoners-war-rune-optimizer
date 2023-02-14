@@ -1,7 +1,8 @@
-package com.optmizer.summonerwaroptimizer.model.build;
+package com.optmizer.summonerwaroptimizer.model.monster;
 
-public enum BuildAttribute {
+public enum MonsterAttribute {
 
+    NONE,
     HIT_POINTS,
     ATTACK,
     DEFENSE,

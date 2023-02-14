@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class MonsterConversionService {
 
     @Autowired
-    private RuneConversionService runeConversionService;
+    private BuildConversionService buildConversionService;
 
     @Autowired
     private BaseMonsterService baseMonsterService;
@@ -25,20 +25,16 @@ public class MonsterConversionService {
     }
 
     public Monster toMonster(SwarfarmMonster swarfarmMonster) {
-        var equippedRunes = runeConversionService.toRunes(swarfarmMonster.getRunes());
+        var build = buildConversionService.toBuild(swarfarmMonster.getRunes());
         var baseMonster = baseMonsterService.findBySwarfarmId(swarfarmMonster.getMasterId());
 
-        var monster = Monster.builder()
+        return Monster.builder()
             .swarfarmId(swarfarmMonster.getId())
             .baseMonster(baseMonster)
             .level(swarfarmMonster.getLevel())
             .grade(swarfarmMonster.getGrade())
-            .runes(equippedRunes)
+            .build(build)
             .build();
-
-        equippedRunes.forEach(rune -> rune.setMonster(monster));
-
-        return monster;
 
     }
 }

@@ -1,9 +1,11 @@
 package com.optmizer.summonerwaroptimizer.resource;
 
 import com.optmizer.summonerwaroptimizer.model.monster.Monster;
+import com.optmizer.summonerwaroptimizer.resource.response.MonsterStats;
 import com.optmizer.summonerwaroptimizer.service.MonsterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,8 +19,18 @@ public class MonsterResource {
     private MonsterService monsterService;
 
     @GetMapping
-    public List<Monster> findAll() {
-        return monsterService.findAll();
+    public List<Monster> get() {
+        return monsterService.get();
+    }
+
+    @GetMapping("/{id}")
+    public Monster getById(@PathVariable("id") Long swarfarmId) {
+        return monsterService.getBySwarmFarmId(swarfarmId);
+    }
+
+    @GetMapping("/{id}/stats")
+    public MonsterStats getMonsterStats(@PathVariable("id") Long swarfarmId) {
+        return monsterService.getMonsterStats(swarfarmId);
     }
 
 }

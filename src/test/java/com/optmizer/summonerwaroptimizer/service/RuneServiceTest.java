@@ -1,6 +1,6 @@
 package com.optmizer.summonerwaroptimizer.service;
 
-import com.optmizer.summonerwaroptimizer.model.RuneFactory;
+import com.optmizer.summonerwaroptimizer.model.rune.RuneFactory;
 import com.optmizer.summonerwaroptimizer.repository.RuneRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

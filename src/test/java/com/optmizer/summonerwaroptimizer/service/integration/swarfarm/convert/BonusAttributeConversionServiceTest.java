@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
 import com.optmizer.summonerwaroptimizer.exception.UnmappedAttributeConversionException;
-import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
-class AttributeConversionServiceTest {
+class BonusAttributeConversionServiceTest {
 
     @InjectMocks
     private AttributeConversionService attributeConversionService;
@@ -35,7 +35,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_FLAT_HIT_POINTS_INDEX);
 
         //then
-        assertEquals(Attribute.FLAT_HIT_POINTS, attribute);
+        assertEquals(BonusAttribute.FLAT_HIT_POINTS, attribute);
     }
 
     @Test
@@ -44,7 +44,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_HIT_POINTS_INDEX);
 
         //then
-        assertEquals(Attribute.HIT_POINTS, attribute);
+        assertEquals(BonusAttribute.HIT_POINTS, attribute);
     }
 
     @Test
@@ -53,7 +53,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_FLAT_ATTACK_INDEX);
 
         //then
-        assertEquals(Attribute.FLAT_ATTACK, attribute);
+        assertEquals(BonusAttribute.FLAT_ATTACK, attribute);
     }
 
     @Test
@@ -62,7 +62,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_ATTACK_INDEX);
 
         //then
-        assertEquals(Attribute.ATTACK, attribute);
+        assertEquals(BonusAttribute.ATTACK, attribute);
     }
 
     @Test
@@ -71,7 +71,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_FLAT_DEFENSE_INDEX);
 
         //then
-        assertEquals(Attribute.FLAT_DEFENSE, attribute);
+        assertEquals(BonusAttribute.FLAT_DEFENSE, attribute);
     }
 
     @Test
@@ -80,7 +80,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_DEFENSE_INDEX);
 
         //then
-        assertEquals(Attribute.DEFENSE, attribute);
+        assertEquals(BonusAttribute.DEFENSE, attribute);
     }
 
     @Test
@@ -89,7 +89,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_SPEED_INDEX);
 
         //then
-        assertEquals(Attribute.SPEED, attribute);
+        assertEquals(BonusAttribute.SPEED, attribute);
     }
 
     @Test
@@ -98,7 +98,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_CRITICAL_RATE_INDEX);
 
         //then
-        assertEquals(Attribute.CRITICAl_RATE, attribute);
+        assertEquals(BonusAttribute.CRITICAl_RATE, attribute);
     }
 
     @Test
@@ -107,7 +107,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_CRITICAL_DAMAGE_POINTS_INDEX);
 
         //then
-        assertEquals(Attribute.CRITICAL_DAMAGE, attribute);
+        assertEquals(BonusAttribute.CRITICAL_DAMAGE, attribute);
     }
 
     @Test
@@ -116,7 +116,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_RESISTANCE_INDEX);
 
         //then
-        assertEquals(Attribute.RESISTANCE, attribute);
+        assertEquals(BonusAttribute.RESISTANCE, attribute);
     }
 
     @Test
@@ -125,7 +125,7 @@ class AttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_ACCURACY_INDEX);
 
         //then
-        assertEquals(Attribute.ACCURACY, attribute);
+        assertEquals(BonusAttribute.ACCURACY, attribute);
     }
 
     @Test
