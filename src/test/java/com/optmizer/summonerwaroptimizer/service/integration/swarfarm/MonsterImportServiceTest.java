@@ -1,8 +1,8 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm;
 
 import com.optmizer.summonerwaroptimizer.exception.DatabaseIntegrationException;
-import com.optmizer.summonerwaroptimizer.model.MonsterFactory;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmMonsterFactory;
+import com.optmizer.summonerwaroptimizer.model.monster.MonsterFactory;
 import com.optmizer.summonerwaroptimizer.service.MonsterService;
 import com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert.MonsterConversionService;
 import org.hibernate.exception.ConstraintViolationException;

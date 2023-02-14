@@ -26,6 +26,7 @@ public class BaseMonster {
 
     private Long swarfarmId;
     private String imageFileName;
+
     private Integer hitPoints;
     private Integer attack;
     private Integer defense;

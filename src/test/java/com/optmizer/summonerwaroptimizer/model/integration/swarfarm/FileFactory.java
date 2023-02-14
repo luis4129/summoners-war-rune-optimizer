@@ -1,4 +1,4 @@
-package com.optmizer.summonerwaroptimizer.model;
+package com.optmizer.summonerwaroptimizer.model.integration.swarfarm;
 
 import java.io.File;
 import java.util.List;

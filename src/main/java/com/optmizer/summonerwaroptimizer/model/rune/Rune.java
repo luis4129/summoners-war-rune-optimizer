@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.model.rune;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.optmizer.summonerwaroptimizer.model.monster.Monster;
+import com.optmizer.summonerwaroptimizer.model.build.Build;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +25,10 @@ public class Rune {
 
     @ManyToOne
     @JsonIgnore
-    private Monster monster;
+    private Build build;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private MainStat mainStat;
 
     @OneToOne(cascade = CascadeType.ALL)
     private PrefixStat prefixStat;
@@ -36,7 +39,6 @@ public class Rune {
     @Column(name = "rune_set")
     private RuneSet set;
 
-    private Attribute mainStat;
     private Integer slot;
     private Integer grade;
     private Integer level;

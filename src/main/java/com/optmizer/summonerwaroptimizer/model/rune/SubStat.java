@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @Entity
 @Builder
@@ -26,8 +28,18 @@ public class SubStat {
     @Column(name = "stat_value")
     private Integer value;
 
-    private Attribute attribute;
+    private BonusAttribute bonusAttribute;
     private Integer grindValue;
     private boolean enchanted;
+
+    @JsonIgnore
+    public BigDecimal getBonusAttributeValue(Integer baseAttributeValue) {
+        return bonusAttribute.getEffectAggregationType().calculate(baseAttributeValue, getTotalValue());
+    }
+
+    @JsonIgnore
+    public Integer getTotalValue() {
+        return value + grindValue;
+    }
 
 }

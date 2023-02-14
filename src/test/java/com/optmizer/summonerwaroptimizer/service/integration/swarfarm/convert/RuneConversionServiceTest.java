@@ -1,10 +1,10 @@
 package com.optmizer.summonerwaroptimizer.service.integration.swarfarm.convert;
 
-import com.optmizer.summonerwaroptimizer.model.PrefixStatFactory;
-import com.optmizer.summonerwaroptimizer.model.SubStatFactory;
 import com.optmizer.summonerwaroptimizer.model.integration.swarfarm.SwarfarmRuneFactory;
-import com.optmizer.summonerwaroptimizer.model.rune.Attribute;
+import com.optmizer.summonerwaroptimizer.model.rune.MainStatFactory;
+import com.optmizer.summonerwaroptimizer.model.rune.PrefixStatFactory;
 import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
+import com.optmizer.summonerwaroptimizer.model.rune.SubStatFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,7 +32,7 @@ class RuneConversionServiceTest {
         //given
         var swarfarmRunes = SwarfarmRuneFactory.getValidSwarfarmRunes();
         var runeSet = RuneSet.VIOLENT;
-        var mainStat = Attribute.SPEED;
+        var mainStat = MainStatFactory.getValidMainStat();
         var prefixStat = PrefixStatFactory.getValidPrefixStat();
         var subStats = SubStatFactory.getValidSubStats();
         var firstSwarfarmRune = swarfarmRunes.get(0);
@@ -57,7 +57,7 @@ class RuneConversionServiceTest {
         assertEquals(firstSwarfarmRune.getSlot(), firstRune.getSlot());
         assertEquals(firstSwarfarmRune.getGrade(), firstRune.getGrade());
         assertEquals(firstSwarfarmRune.getLevel(), firstRune.getLevel());
-        assertEquals(Attribute.SPEED, firstRune.getMainStat());
+        assertEquals(mainStat, firstRune.getMainStat());
         assertEquals(prefixStat, firstRune.getPrefixStat());
         assertEquals(subStats, firstRune.getSubStats());
 
