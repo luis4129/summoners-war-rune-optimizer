@@ -24,13 +24,17 @@ public class RuneSetBonusService {
     private final Map<MonsterAttribute, List<RuneSet>> attributeBonusMap = generateAttributeMap();
 
     public BigDecimal getRuneSetBonus(MonsterAttribute monsterAttribute, Integer baseValue, Build build) {
-        var attributeBonusRuneSets = attributeBonusMap.get(monsterAttribute);
+        var runeSetsThatGiveBonusToAttribute = getRuneSetWhichGiveBonusToAttribute(monsterAttribute);
         var activeRuneSets = getActiveRuneSets(build.getRunes());
 
-        return attributeBonusRuneSets.stream()
+        return runeSetsThatGiveBonusToAttribute.stream()
             .filter(activeRuneSets::contains)
             .map(runeSet -> runeSet.calculateBonusEffect(baseValue))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    public List<RuneSet> getRuneSetWhichGiveBonusToAttribute(MonsterAttribute monsterAttribute) {
+        return attributeBonusMap.get(monsterAttribute);
     }
 
     private Map<MonsterAttribute, List<RuneSet>> generateAttributeMap() {

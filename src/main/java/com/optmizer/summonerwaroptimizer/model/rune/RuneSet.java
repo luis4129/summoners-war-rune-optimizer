@@ -52,4 +52,8 @@ public enum RuneSet {
         return effectAggregationType.calculate(baseValue, bonusValue);
     }
 
+    public BigDecimal getEqualizedBonusValue() {
+        return BigDecimal.valueOf(requirement == 2 ? getBonusValue() * 2 : getBonusValue());
+    }
+
 }

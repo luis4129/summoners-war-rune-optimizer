@@ -31,7 +31,7 @@ public class SwarfarmConstants {
             entry(5, BonusAttribute.FLAT_DEFENSE),
             entry(6, BonusAttribute.DEFENSE),
             entry(8, BonusAttribute.SPEED),
-            entry(9, BonusAttribute.CRITICAl_RATE),
+            entry(9, BonusAttribute.CRITICAL_RATE),
             entry(10, BonusAttribute.CRITICAL_DAMAGE),
             entry(11, BonusAttribute.RESISTANCE),
             entry(12, BonusAttribute.ACCURACY));

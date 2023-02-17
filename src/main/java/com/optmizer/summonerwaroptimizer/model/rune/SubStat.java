@@ -21,8 +21,8 @@ public class SubStat {
     @JsonIgnore
     private Long id;
 
-    @ManyToOne
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private Rune rune;
 
     @Column(name = "stat_value")
@@ -40,6 +40,13 @@ public class SubStat {
     @JsonIgnore
     public Integer getTotalValue() {
         return value + grindValue;
+    }
+
+    @JsonIgnore
+    public BigDecimal getFullyGrindedValue() {
+        var maxGrindValue = rune.isAncient() ? bonusAttribute.getMaxAncientGrind() : bonusAttribute.getMaxGrindValue();
+
+        return BigDecimal.valueOf(value).add(maxGrindValue);
     }
 
 }

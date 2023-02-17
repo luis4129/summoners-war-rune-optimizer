@@ -1,8 +1,8 @@
 package com.optmizer.summonerwaroptimizer.config;
 
-import com.optmizer.summonerwaroptimizer.model.build.BuildStrategy;
-import com.optmizer.summonerwaroptimizer.service.BuildStrategyService;
+import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
 import com.optmizer.summonerwaroptimizer.service.MonsterService;
+import com.optmizer.summonerwaroptimizer.service.optimizer.BuildStrategyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +40,7 @@ public class BuildStrategyInitializeService {
         var buildPreferences = config.getBuildPreferences();
 
         var buildStrategy = BuildStrategy.builder()
-            .monster(monsterService.getBySwarmFarmId(config.getMonster()))
+            .monster(monsterService.findBySwarmFarmId(config.getMonster()))
             .runeSets(config.getRuneSets())
             .buildPreferences(buildPreferences)
             .build();

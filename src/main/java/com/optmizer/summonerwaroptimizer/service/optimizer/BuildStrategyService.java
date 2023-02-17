@@ -1,6 +1,6 @@
-package com.optmizer.summonerwaroptimizer.service;
+package com.optmizer.summonerwaroptimizer.service.optimizer;
 
-import com.optmizer.summonerwaroptimizer.model.build.BuildStrategy;
+import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
 import com.optmizer.summonerwaroptimizer.repository.BuildStrategyRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -29,11 +29,16 @@ public class RuneConversionService {
         var subStats = statConversionService.toSubStats(swarfarmRune.getSecondaryEffects());
         var runeSet = runeSetConversionService.toRuneSet(swarfarmRune.getSet());
 
+        var swarfarmGrade = swarfarmRune.getGrade();
+        var isAncient = isAncient(swarfarmGrade);
+        var grade = toGrade(swarfarmGrade, isAncient);
+
+
         var rune = Rune.builder()
             .swarfarmId(swarfarmRune.getId())
             .set(runeSet)
             .slot(swarfarmRune.getSlot())
-            .grade(swarfarmRune.getGrade())
+            .grade(grade)
             .level(swarfarmRune.getLevel())
             .mainStat(mainStat)
             .prefixStat(prefixStat)
@@ -43,5 +48,13 @@ public class RuneConversionService {
         subStats.forEach(subStat -> subStat.setRune(rune));
 
         return rune;
+    }
+
+    private boolean isAncient(Integer grade) {
+        return grade > 10;
+    }
+
+    private Integer toGrade(Integer swarfarmGrade, boolean isAncient) {
+        return isAncient ? swarfarmGrade - 10 : swarfarmGrade;
     }
 }

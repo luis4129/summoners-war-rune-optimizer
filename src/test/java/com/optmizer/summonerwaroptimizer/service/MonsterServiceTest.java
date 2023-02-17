@@ -38,7 +38,7 @@ class MonsterServiceTest {
             .thenReturn(expectedMonsters);
 
         //when
-        var actualMonsters = monsterService.get();
+        var actualMonsters = monsterService.findAll();
 
         //then
         assertEquals(expectedMonsters, actualMonsters);
@@ -53,7 +53,7 @@ class MonsterServiceTest {
             .thenReturn(expectedMonster);
 
         //when
-        var actualMonsters = monsterService.getBySwarmFarmId(SWARFARM_ID);
+        var actualMonsters = monsterService.findBySwarmFarmId(SWARFARM_ID);
 
         //then
         assertEquals(expectedMonster, actualMonsters);

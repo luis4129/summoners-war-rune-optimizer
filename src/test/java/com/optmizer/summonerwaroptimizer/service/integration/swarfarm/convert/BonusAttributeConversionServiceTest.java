@@ -98,7 +98,7 @@ class BonusAttributeConversionServiceTest {
         var attribute = attributeConversionService.toAttribute(SWARFARM_CRITICAL_RATE_INDEX);
 
         //then
-        assertEquals(BonusAttribute.CRITICAl_RATE, attribute);
+        assertEquals(BonusAttribute.CRITICAL_RATE, attribute);
     }
 
     @Test
