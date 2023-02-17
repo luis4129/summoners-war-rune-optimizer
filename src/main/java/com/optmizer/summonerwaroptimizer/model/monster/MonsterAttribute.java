@@ -1,5 +1,8 @@
 package com.optmizer.summonerwaroptimizer.model.monster;
 
+import lombok.Getter;
+
+@Getter
 public enum MonsterAttribute {
 
     NONE,
@@ -11,5 +14,4 @@ public enum MonsterAttribute {
     CRITICAL_DAMAGE,
     RESISTANCE,
     ACCURACY;
-
 }

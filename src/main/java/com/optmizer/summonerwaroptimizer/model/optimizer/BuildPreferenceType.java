@@ -1,4 +1,4 @@
-package com.optmizer.summonerwaroptimizer.model.build;
+package com.optmizer.summonerwaroptimizer.model.optimizer;
 
 public enum BuildPreferenceType {
 

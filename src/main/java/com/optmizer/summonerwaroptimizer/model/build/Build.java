@@ -20,7 +20,7 @@ public class Build {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @OneToMany(mappedBy = "build", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "build", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Rune> runes;
 
 }

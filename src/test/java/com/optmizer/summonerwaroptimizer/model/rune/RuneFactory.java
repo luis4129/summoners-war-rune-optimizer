@@ -19,7 +19,7 @@ public class RuneFactory {
                 .level(12)
                 .mainStat(MainStat.builder().bonusAttribute(BonusAttribute.FLAT_ATTACK).value(118).build())
                 .subStats(List.of(
-                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAl_RATE).value(15).build(),
+                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_RATE).value(15).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.ATTACK).value(9).grindValue(6).enchanted(true).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_DAMAGE).value(14).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.SPEED).value(6).build()
@@ -32,7 +32,7 @@ public class RuneFactory {
                 .level(15)
                 .mainStat(MainStat.builder().bonusAttribute(BonusAttribute.ATTACK).value(63).build())
                 .subStats(List.of(
-                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAl_RATE).value(16).build(),
+                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_RATE).value(16).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.HIT_POINTS).value(7).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.ACCURACY).value(8).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.FLAT_HIT_POINTS).value(282).build()
@@ -47,7 +47,7 @@ public class RuneFactory {
                 .prefixStat(PrefixStat.builder().bonusAttribute(BonusAttribute.CRITICAL_DAMAGE).value(7).build())
                 .subStats(List.of(
                     SubStat.builder().bonusAttribute(BonusAttribute.HIT_POINTS).value(7).build(),
-                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAl_RATE).value(16).build(),
+                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_RATE).value(16).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.SPEED).value(10).build()
                 ))
                 .build(),
@@ -60,7 +60,7 @@ public class RuneFactory {
                 .prefixStat(PrefixStat.builder().bonusAttribute(BonusAttribute.FLAT_HIT_POINTS).value(322).build())
                 .subStats(List.of(
                     SubStat.builder().bonusAttribute(BonusAttribute.HIT_POINTS).value(5).build(),
-                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAl_RATE).value(16).grindValue(6).build(),
+                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_RATE).value(16).grindValue(6).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.FLAT_DEFENSE).value(11).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.ATTACK).value(6).grindValue(3).build()
                 ))
@@ -71,7 +71,7 @@ public class RuneFactory {
                 .grade(6)
                 .level(12)
                 .mainStat(MainStat.builder().bonusAttribute(BonusAttribute.FLAT_HIT_POINTS).value(1800).build())
-                .prefixStat(PrefixStat.builder().bonusAttribute(BonusAttribute.CRITICAl_RATE).value(4).build())
+                .prefixStat(PrefixStat.builder().bonusAttribute(BonusAttribute.CRITICAL_RATE).value(4).build())
                 .subStats(List.of(
                     SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_DAMAGE).value(19).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.HIT_POINTS).value(8).build(),
@@ -88,7 +88,7 @@ public class RuneFactory {
                 .subStats(List.of(
                     SubStat.builder().bonusAttribute(BonusAttribute.FLAT_ATTACK).value(15).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.SPEED).value(9).build(),
-                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAl_RATE).value(14).enchanted(true).build(),
+                    SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_RATE).value(14).enchanted(true).build(),
                     SubStat.builder().bonusAttribute(BonusAttribute.CRITICAL_DAMAGE).value(6).build()
                 ))
                 .build()

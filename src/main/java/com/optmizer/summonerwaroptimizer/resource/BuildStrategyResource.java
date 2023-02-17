@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.resource;
 
-import com.optmizer.summonerwaroptimizer.model.build.BuildStrategy;
-import com.optmizer.summonerwaroptimizer.service.BuildStrategyService;
+import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
+import com.optmizer.summonerwaroptimizer.service.optimizer.BuildStrategyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

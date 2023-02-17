@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -23,7 +24,7 @@ public class RuneImportService {
 
     public void importUnequippedRunes(List<SwarfarmRune> swarfarmRunes) {
         try {
-            var runes = runeConversionService.toRunes(swarfarmRunes);
+            var runes = runeConversionService.toRunes(swarfarmRunes).stream().filter(rune -> rune.getGrade().equals(6)).collect(Collectors.toList());
 
             runeService.saveAll(runes);
         } catch (Exception ex) {

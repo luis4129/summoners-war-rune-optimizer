@@ -23,25 +23,29 @@ public class Rune {
 
     private Long swarfarmId;
 
-    @ManyToOne
     @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
     private Build build;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private MainStat mainStat;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private PrefixStat prefixStat;
 
-    @OneToMany(mappedBy = "rune", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "rune", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<SubStat> subStats;
 
     @Column(name = "rune_set")
     private RuneSet set;
-
     private Integer slot;
-    private Integer grade;
     private Integer level;
+    private Integer grade;
+    private boolean isAncient;
+
+    public boolean isOddSlot() {
+        return slot % 2 == 1;
+    }
 
 
 }
