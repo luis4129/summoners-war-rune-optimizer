@@ -1,6 +1,5 @@
 package com.optmizer.summonerwaroptimizer.config;
 
-import com.optmizer.summonerwaroptimizer.model.optimizer.BuildPreferenceType;
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
 import com.optmizer.summonerwaroptimizer.service.MonsterService;
 import com.optmizer.summonerwaroptimizer.service.optimizer.BuildStrategyService;
@@ -48,7 +47,6 @@ public class BuildStrategyInitializeService {
             .build();
 
         buildPreferences.forEach(buildPreference -> buildPreference.setBuildStrategy(buildStrategy));
-        buildPreferences.stream().filter(buildPreference -> buildPreference.getType().equals(BuildPreferenceType.AS_HIGH_AS_POSSIBLE)).forEach(buildPreference -> buildPreference.setPriority(0));
 
         return buildStrategy;
     }

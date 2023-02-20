@@ -3,21 +3,20 @@ package com.optmizer.summonerwaroptimizer.service.optimizer.efficiency;
 import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
 import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
 import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.LimitedAttributeBonus;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.PriorityEfficiencyRatio;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.RuneEfficiencyRatio;
 import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 import com.optmizer.summonerwaroptimizer.service.simulation.bonus.RuneSetBonusService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.CollectionUtils.isEmpty;
 
 @Slf4j
 @Service
@@ -28,46 +27,56 @@ public class RuneSetEfficiencyService {
 
     private final Map<String, Map<Integer, BigDecimal>> strategyMaxEfficiencyMap = new HashMap<>();
 
-    public RuneEfficiencyRatio getSubStatEfficiencyRatio(BaseMonster baseMonster, RuneSet runeSet,
-                                                         Map<Integer, List<MonsterAttribute>> usefulAttributesByPriorityMap,
-                                                         List<MonsterAttribute> limitedAttributes,
-                                                         List<RuneSet> requiredRuneSets) {
-        var limitedAttributeBonuses = getLimitedAttributeBonuses(limitedAttributes, runeSet, baseMonster);
-        var priorityEfficiencyRatios = usefulAttributesByPriorityMap.keySet()
-            .stream()
-            .map(priority -> getSubStatPriorityEfficiencyRatio(usefulAttributesByPriorityMap, priority, runeSet, requiredRuneSets))
-            .toList();
+    public BigDecimal getRuneSetEfficiencyRatio(RuneSet runeSet, List<RuneSet> requiredRuneSets, List<MonsterAttribute> usefulAttributes) {
+        if (notWithinRequiredSets(runeSet, requiredRuneSets) || isRuneSetBonusUseless(usefulAttributes, runeSet))
+            return BigDecimal.ZERO;
 
-        return RuneEfficiencyRatio.builder()
-            .limitedAttributeBonuses(limitedAttributeBonuses)
-            .priorityEfficiencyRatios(priorityEfficiencyRatios)
-            .build();
+        var bonusValue = runeSet.getEqualizedBonusValue();
+        var maxTotalSubStatBonus = BonusAttribute.valueOf(runeSet.getAttribute().name()).getFullyMaxedSubStatBonus();
+
+        return bonusValue.divide(maxTotalSubStatBonus, 4, RoundingMode.DOWN);
     }
 
-    public PriorityEfficiencyRatio getSubStatPriorityEfficiencyRatio(Map<Integer, List<MonsterAttribute>> usefulAttributesByPriorityMap, Integer priority, RuneSet runeSet, List<RuneSet> requiredRuneSets) {
-        var usefulAttributes = usefulAttributesByPriorityMap.get(priority);
-
+    public BigDecimal getMaxRuneSetEfficiency(Integer runeSetRequirement, List<RuneSet> requiredRuneSets, List<MonsterAttribute> usefulAttributes) {
         if (!isEmpty(requiredRuneSets) && areRequiredRuneSetUseless(usefulAttributes, requiredRuneSets))
-            return PriorityEfficiencyRatio.builder()
-                .efficiencyRatio(BigDecimal.ZERO)
-                .maxEfficiencyRatio(BigDecimal.ZERO)
-                .build();
+            return BigDecimal.ZERO;
 
-        var maxRuneSetEfficiencyRatio = getBestRuneSetEfficiency(usefulAttributes, runeSet.getRequirement());
+        var attributesKey = getAttributesKey(usefulAttributes);
+        var runeSetRequirementEfficiencyMap = strategyMaxEfficiencyMap.getOrDefault(attributesKey, new HashMap<>());
+        var strategyMaxEfficiency = runeSetRequirementEfficiencyMap.get(runeSetRequirement);
 
-        if (isRuneSetBonusUseless(usefulAttributes, runeSet))
-            return PriorityEfficiencyRatio.builder()
-                .efficiencyRatio(BigDecimal.ZERO)
-                .maxEfficiencyRatio(maxRuneSetEfficiencyRatio)
-                .build();
+        if (Objects.isNull(strategyMaxEfficiency)) {
+            var maxEfficiency = usefulAttributes
+                .stream()
+                .map(runeSetBonusService::getRuneSetWhichGiveBonusToAttribute)
+                .flatMap(Collection::stream)
+                .filter(runeSet -> runeSetRequirement >= runeSet.getRequirement())
+                .map(runeSet -> getRuneSetEfficiencyRatio(runeSet, requiredRuneSets))
+                .max(Comparator.naturalOrder())
+                .orElse(BigDecimal.ZERO);
 
-        var runeSetEfficiencyRatio = getRuneSetEfficiencyComparedToSubStats(runeSet);
+            runeSetRequirementEfficiencyMap.put(runeSetRequirement, maxEfficiency);
+            strategyMaxEfficiencyMap.put(attributesKey, runeSetRequirementEfficiencyMap);
+        }
 
-        return PriorityEfficiencyRatio.builder()
-            .priority(priority)
-            .efficiencyRatio(runeSetEfficiencyRatio)
-            .maxEfficiencyRatio(maxRuneSetEfficiencyRatio)
+        return strategyMaxEfficiencyMap.get(attributesKey).get(runeSetRequirement);
+    }
+
+    public List<LimitedAttributeBonus> getLimitedAttributeBonuses(BaseMonster baseMonster, RuneSet runeSet, List<MonsterAttribute> limitedAttributes) {
+        var monsterAttribute = runeSet.getAttribute();
+
+        if (!limitedAttributes.contains(monsterAttribute))
+            return Collections.emptyList();
+
+        var bonusValue = runeSet.getEqualizedBonusValue();
+        var flatAttributeBonus = getFlatRuneSetBonus(runeSet, baseMonster, bonusValue);
+
+        var attributeBonus = LimitedAttributeBonus.builder()
+            .monsterAttribute(monsterAttribute)
+            .bonus(flatAttributeBonus)
             .build();
+
+        return List.of(attributeBonus);
     }
 
     private boolean areRequiredRuneSetUseless(List<MonsterAttribute> usefulAttributesBonus, List<RuneSet> requiredRuneSets) {
@@ -83,50 +92,18 @@ public class RuneSetEfficiencyService {
         return !usefulAttributesBonus.contains(runeSet.getAttribute());
     }
 
-    private BigDecimal getBestRuneSetEfficiency(List<MonsterAttribute> usefulAttributes, Integer runeSetRequirement) {
-        var attributesKey = getAttributesKey(usefulAttributes);
-        var runeSetRequirementEfficiencyMap = strategyMaxEfficiencyMap.getOrDefault(attributesKey, new HashMap<>());
-        var strategyMaxEfficiency = runeSetRequirementEfficiencyMap.get(runeSetRequirement);
+    private BigDecimal getRuneSetEfficiencyRatio(RuneSet runeSet, List<RuneSet> requiredRuneSets) {
+        if (notWithinRequiredSets(runeSet, requiredRuneSets))
+            return BigDecimal.ZERO;
 
-        if (Objects.isNull(strategyMaxEfficiency)) {
-            var maxEfficiency = usefulAttributes
-                .stream()
-                .map(runeSetBonusService::getRuneSetWhichGiveBonusToAttribute)
-                .flatMap(Collection::stream)
-                .filter(runeSet -> runeSetRequirement >= runeSet.getRequirement())
-                .map(this::getRuneSetEfficiencyComparedToSubStats)
-                .max(Comparator.naturalOrder())
-                .orElse(BigDecimal.ZERO);
-
-            runeSetRequirementEfficiencyMap.put(runeSetRequirement, maxEfficiency);
-            strategyMaxEfficiencyMap.put(attributesKey, runeSetRequirementEfficiencyMap);
-        }
-
-        return strategyMaxEfficiencyMap.get(attributesKey).get(runeSetRequirement);
-    }
-
-    private BigDecimal getRuneSetEfficiencyComparedToSubStats(RuneSet runeSet) {
         var bonusValue = runeSet.getEqualizedBonusValue();
         var maxTotalSubStatBonus = BonusAttribute.valueOf(runeSet.getAttribute().name()).getFullyMaxedSubStatBonus();
 
         return bonusValue.divide(maxTotalSubStatBonus, 4, RoundingMode.DOWN);
     }
 
-    private List<LimitedAttributeBonus> getLimitedAttributeBonuses(List<MonsterAttribute> limitedAttributes, RuneSet runeSet, BaseMonster baseMonster) {
-        var monsterAttribute = runeSet.getAttribute();
-
-        if (!limitedAttributes.contains(monsterAttribute))
-            return Collections.emptyList();
-
-        var bonusValue = runeSet.getEqualizedBonusValue();
-        var flatAttributeBonus = getFlatRuneSetBonus(runeSet, baseMonster, bonusValue);
-
-        var attributeBonus = LimitedAttributeBonus.builder()
-            .monsterAttribute(monsterAttribute)
-            .bonus(flatAttributeBonus)
-            .build();
-
-        return List.of(attributeBonus);
+    private boolean notWithinRequiredSets(RuneSet runeSet, List<RuneSet> requiredRuneSets) {
+        return !ObjectUtils.isEmpty(requiredRuneSets) && !requiredRuneSets.stream().filter(requiredSet -> !requiredSet.equals(RuneSet.ANY)).toList().contains(runeSet);
     }
 
     private BigDecimal getFlatRuneSetBonus(RuneSet runeSet, BaseMonster baseMonster, BigDecimal bonusValue) {

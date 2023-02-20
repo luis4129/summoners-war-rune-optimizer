@@ -21,7 +21,7 @@ public class RuneEfficiencyService {
     }
 
     public List<RuneEfficiency> findByMonsterSwarfarmId(Long swarfarmId) {
-        return runeEfficiencyRepository.findByBuildStrategy_Monster_SwarfarmId_OrderByCompleteEfficiencyDesc(swarfarmId);
+        return runeEfficiencyRepository.findByBuildStrategy_Monster_SwarfarmId_OrderByEfficiencyDesc(swarfarmId);
     }
 
     public List<RuneEfficiency> findByRuneSwarfarmId(Long swarfarmId) {

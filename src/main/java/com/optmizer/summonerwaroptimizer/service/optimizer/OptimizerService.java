@@ -11,7 +11,6 @@ import com.optmizer.summonerwaroptimizer.model.optimizer.BuildPreferenceType;
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildSimulation;
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
 import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.RuneEfficiency;
-import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import com.optmizer.summonerwaroptimizer.model.rune.Rune;
 import com.optmizer.summonerwaroptimizer.model.rune.RuneSet;
 import com.optmizer.summonerwaroptimizer.resource.response.MonsterStats;
@@ -49,7 +48,6 @@ public class OptimizerService {
 
     private final List<Rune> equippedRunes = new ArrayList<>();
     private static final BigDecimal RUNES_IN_BUILD = BigDecimal.valueOf(6);
-    private static final List<BuildPreference> failsInARow = new ArrayList<>();
 
     public List<BuildSimulation> optimize() {
         return buildStrategyService.findAll()
@@ -60,8 +58,6 @@ public class OptimizerService {
 
     @Transactional
     public BuildSimulation optimize(BuildStrategy buildStrategy) {
-        //APROXIMATE VALUE INSTEAD OF REMAIN ABOVE IT
-        failsInARow.clear();
         var monster = buildStrategy.getMonster();
         var baseMonster = buildStrategy.getMonster().getBaseMonster();
 
@@ -92,164 +88,67 @@ public class OptimizerService {
                 Map.Entry::getKey,
                 entry -> entry.getValue()
                     .stream()
-                    .max(Comparator.comparing(RuneEfficiency::getCompleteEfficiency))
+                    .max(Comparator.comparing(RuneEfficiency::getEfficiency))
                     .orElseThrow(SlotWithNoRunesException::new)));
     }
 
     private BuildSimulation getBestBuildSimulationRecursively(Map<Integer, RuneEfficiency> currentRunes, BaseMonster baseMonster, List<RuneSet> requiredRuneSets,
                                                               Map<BuildPreference, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>>> attributeEfficiencyBySlotByAttributeMap) {
         var runes = currentRunes.values().stream().map(RuneEfficiency::getRune).toList();
-        var buildEfficiency = currentRunes.values().stream().map(RuneEfficiency::getCompleteEfficiency).reduce(BigDecimal.ZERO, BigDecimal::add).divide(RUNES_IN_BUILD, 2, RoundingMode.DOWN);
+        var buildEfficiency = currentRunes.values().stream().map(RuneEfficiency::getEfficiency).reduce(BigDecimal.ZERO, BigDecimal::add).divide(RUNES_IN_BUILD, 2, RoundingMode.DOWN);
         var build = Build.builder().runes(runes).efficiency(buildEfficiency).build();
         var monsterStats = monsterBuildService.getMonsterStats(baseMonster, build);
         var currentRuneSets = runes.stream().collect(Collectors.groupingBy(Rune::getSet));
         var onlyRequiredValuePreferences = attributeEfficiencyBySlotByAttributeMap.keySet().stream().toList();
 
-        var possibleUnmatchedRequiredValuePreference = onlyRequiredValuePreferences.stream().filter(buildPreference -> buildPreference.getMinimumValue() > monsterStats.getAttributeValue(buildPreference.getAttribute())).findFirst();
-        if (possibleUnmatchedRequiredValuePreference.isPresent()) {
-            var unmatchedRequiredValuePreference = possibleUnmatchedRequiredValuePreference.get();
-            var attributeEfficiencyBySlotMap = attributeEfficiencyBySlotByAttributeMap.get(unmatchedRequiredValuePreference);
+        var possibleUnmatchedPreferenceMinimumValue = onlyRequiredValuePreferences.stream()
+            .filter(buildPreference -> Objects.nonNull(buildPreference.getMinimumValue()))
+            .filter(buildPreference -> buildPreference.getMinimumValue() > monsterStats.getAttributeValue(buildPreference.getAttribute()))
+            .findFirst();
 
-            var higherAttributeRune = getRuneWithHigherAttributeValue(unmatchedRequiredValuePreference, currentRunes, monsterStats, baseMonster, onlyRequiredValuePreferences, attributeEfficiencyBySlotMap, currentRuneSets, requiredRuneSets);
-
+        if (possibleUnmatchedPreferenceMinimumValue.isPresent()) {
+            var unmatchedPreference = possibleUnmatchedPreferenceMinimumValue.get();
+            var higherAttributeRune = getRuneWithHigherAttributeValue(unmatchedPreference, currentRunes, monsterStats, baseMonster, onlyRequiredValuePreferences, attributeEfficiencyBySlotByAttributeMap.get(unmatchedPreference), currentRuneSets, requiredRuneSets);
             currentRunes.put(higherAttributeRune.getRune().getSlot(), higherAttributeRune);
             return getBestBuildSimulationRecursively(currentRunes, baseMonster, requiredRuneSets, attributeEfficiencyBySlotByAttributeMap);
         }
 
-        log.info("c=OptimizerService m=optimize message=Prerequisites have been met, starting to optimize efficiency");
-        return getMostEfficientBuildSimulationWithoutLosingRequirements(currentRunes, baseMonster, attributeEfficiencyBySlotByAttributeMap, requiredRuneSets);
-    }
+        var possibleUnmatchedPreferenceMaximumValue = onlyRequiredValuePreferences.stream()
+            .filter(buildPreference -> Objects.nonNull(buildPreference.getMaximumValue()))
+            .filter(buildPreference -> monsterStats.getAttributeValue(buildPreference.getAttribute()) > buildPreference.getMaximumValue())
+            .findFirst();
 
-    private BuildSimulation getMostEfficientBuildSimulationWithoutLosingRequirements(Map<Integer, RuneEfficiency> currentRunes, BaseMonster baseMonster,
-                                                                                     Map<BuildPreference, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>>> attributeEfficiencyBySlotByAttributeMap,
-                                                                                     List<RuneSet> requiredRuneSets) {
-        var runes = currentRunes.values().stream().map(RuneEfficiency::getRune).toList();
-        var buildEfficiency = currentRunes.values().stream().map(RuneEfficiency::getCompleteEfficiency).reduce(BigDecimal.ZERO, BigDecimal::add).divide(RUNES_IN_BUILD, 2, RoundingMode.DOWN);
-        var build = Build.builder().runes(runes).efficiency(buildEfficiency).build();
-        var monsterStats = monsterBuildService.getMonsterStats(baseMonster, build);
-        var onlyRequiredValuePreferences = attributeEfficiencyBySlotByAttributeMap.keySet().stream().toList();
-
-        var highestAttributeWaste = onlyRequiredValuePreferences.stream()
-            .filter(buildPreference -> !failsInARow.contains(buildPreference))
-            .collect(Collectors.toMap(Function.identity(), buildPreference -> monsterStats.getAttributeValue(buildPreference.getAttribute()) - buildPreference.getMinimumValue()))
-            .entrySet()
-            .stream()
-            .max(Comparator.comparing(entry -> {
-                var preference = entry.getKey();
-                var extraValue = entry.getValue();
-                var bonusAttribute = BonusAttribute.valueOf(preference.getAttribute().name());
-                var flatBonus = getFlatAttributeBonus(bonusAttribute, baseMonster, bonusAttribute.getFullyMaxedSubStatBonus());
-                return BigDecimal.valueOf(extraValue).divide(flatBonus, 4, RoundingMode.DOWN);
-            }))
-            .map(Map.Entry::getKey).get();
-
-
-        return getMostEfficientBuildSimulationByPreference(currentRunes, baseMonster, highestAttributeWaste, monsterStats, attributeEfficiencyBySlotByAttributeMap, requiredRuneSets);
-    }
-
-    private BuildSimulation getMostEfficientBuildSimulationByPreference(Map<Integer, RuneEfficiency> currentRunes, BaseMonster baseMonster, BuildPreference currentBuildPreference, MonsterStats monsterStats,
-                                                                        Map<BuildPreference, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>>> attributeEfficiencyBySlotByAttributeMap,
-                                                                        List<RuneSet> requiredRuneSets) {
-
-        var runes = currentRunes.values().stream().map(RuneEfficiency::getRune).toList();
-        var buildEfficiency = currentRunes.values().stream().map(RuneEfficiency::getCompleteEfficiency).reduce(BigDecimal.ZERO, BigDecimal::add).divide(RUNES_IN_BUILD, 2, RoundingMode.DOWN);
-        var build = Build.builder().runes(runes).efficiency(buildEfficiency).build();
-        var currentPreferenceAttribute = currentBuildPreference.getAttribute();
-        var onlyRequiredValuePreferences = attributeEfficiencyBySlotByAttributeMap.keySet().stream().toList();
-        var highestPriority = onlyRequiredValuePreferences.stream().map(BuildPreference::getPriority).max(Comparator.naturalOrder()).orElse(0);
-
-        var currentRuneSets = runes.stream().collect(Collectors.groupingBy(Rune::getSet));
-
-        var attributeEfficiencyBySlotMap = attributeEfficiencyBySlotByAttributeMap.get(currentBuildPreference);
-        var runeSetsBonusesThaCanBeLost = getRuneSetBonusesThatCanBeLost(currentRuneSets, baseMonster);
-        var requiredRuneSetsThatCanBeLost = getRequiredRuneSetsThatCanBeLost(currentRunes, requiredRuneSets);
-
-        var highestRatio = BigDecimal.ZERO;
-        var highestRatioSlot = 0;
-        RuneEfficiency highestRatioRune = null;
-
-        for (var slot : attributeEfficiencyBySlotMap.keySet()) {
-            try {
-                var currentRune = currentRunes.get(slot);
-                var currentRuneEfficiency = currentRune.getEfficiencyByPriority(highestPriority);
-                var currentRuneAttributeBonus = currentRune.getLimitedAttributeBonusValue(currentPreferenceAttribute);
-
-                var minimumAttributeValues = onlyRequiredValuePreferences.stream()
-                    .collect(Collectors.toMap(BuildPreference::getAttribute, buildPreference -> {
-                        var extraValue = monsterStats.getAttributeValue(buildPreference.getAttribute()) - buildPreference.getMinimumValue();
-                        return currentRune.getLimitedAttributeBonusValue(buildPreference.getAttribute()).subtract(BigDecimal.valueOf(extraValue));
-                    }));
-
-                var attributeEfficiencyMap = attributeEfficiencyBySlotMap.get(slot);
-                var moreEfficientRuneAttributeBonus = getMoreEfficientRuneKey(attributeEfficiencyMap, currentRune, currentBuildPreference, minimumAttributeValues, runeSetsBonusesThaCanBeLost, requiredRuneSetsThatCanBeLost);
-                var moreEfficientRune = attributeEfficiencyMap.get(moreEfficientRuneAttributeBonus);
-
-                var attributeLoss = currentRuneAttributeBonus.subtract(moreEfficientRuneAttributeBonus);
-                var efficiencyGain = moreEfficientRune.getEfficiencyByPriority(highestPriority).subtract(currentRuneEfficiency);
-
-                var efficiencyGainPerAttributeLossRatio = efficiencyGain.divide(attributeLoss, 4, RoundingMode.UP);
-
-                if (efficiencyGainPerAttributeLossRatio.compareTo(highestRatio) > 0) {
-                    highestRatio = efficiencyGainPerAttributeLossRatio;
-                    highestRatioSlot = slot;
-                    highestRatioRune = moreEfficientRune;
-                }
-            } catch (MoreEfficientRuneKeyNotFoundException ignored) {
-            }
+        if (possibleUnmatchedPreferenceMaximumValue.isPresent()) {
+            var unmatchedPreference = possibleUnmatchedPreferenceMaximumValue.get();
+            var lowerAttributeRune = getRuneWithLowerAttributeValue(unmatchedPreference, currentRunes, monsterStats, baseMonster, onlyRequiredValuePreferences, attributeEfficiencyBySlotByAttributeMap.get(unmatchedPreference), currentRuneSets, requiredRuneSets);
+            currentRunes.put(lowerAttributeRune.getRune().getSlot(), lowerAttributeRune);
+            return getBestBuildSimulationRecursively(currentRunes, baseMonster, requiredRuneSets, attributeEfficiencyBySlotByAttributeMap);
         }
 
-        if (stillCanUpgradeLoweringExtraAttributesPreference(highestRatioSlot)) {
-            log.info("c=OptimizerService m=getBestBuildSimulation message=Replacing rune, current status: {}", monsterStats);
-            failsInARow.clear();
-            currentRunes.put(highestRatioSlot, highestRatioRune);
-        } else {
-            failsInARow.add(currentBuildPreference);
-        }
-
-        if (failsInARow.size() == onlyRequiredValuePreferences.size())
-            return BuildSimulation.builder()
-                .monsterName(baseMonster.getName())
-                .monsterStats(monsterStats)
-                .build(build)
-                .build();
-
-        return getMostEfficientBuildSimulationWithoutLosingRequirements(currentRunes, baseMonster, attributeEfficiencyBySlotByAttributeMap, requiredRuneSets);
-    }
-
-    private BigDecimal getFlatAttributeBonus(BonusAttribute bonusAttribute, BaseMonster baseMonster, BigDecimal attributeBonus) {
-        return switch (bonusAttribute) {
-            case HIT_POINTS, ATTACK, DEFENSE -> {
-                var monsterAttribute = bonusAttribute.getMonsterAttribute();
-                var baseAttributeValue = baseMonster.getAttributeValue(monsterAttribute);
-
-                yield bonusAttribute.getEffectAggregationType().calculate(attributeBonus.intValue(), baseAttributeValue);
-            }
-            default -> attributeBonus;
-        };
-    }
-
-    private boolean stillCanUpgradeLoweringExtraAttributesPreference(Integer highestRatioSlot) {
-        return highestRatioSlot != 0;
+        return BuildSimulation.builder()
+            .monsterName(baseMonster.getName())
+            .monsterStats(monsterStats)
+            .build(build)
+            .build();
     }
 
     private RuneEfficiency getRuneWithHigherAttributeValue(BuildPreference unmatchedRequiredValuePreference, Map<Integer, RuneEfficiency> currentRunes, MonsterStats monsterStats, BaseMonster baseMonster,
-                                                           List<BuildPreference> onlyRequiredValuePreferences, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>> missingAttributeEfficiencyBySlotMap,
+                                                           List<BuildPreference> onlyRequiredValuePreferences, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>> slotEfficiencyMap,
                                                            Map<RuneSet, List<Rune>> currentRuneSets, List<RuneSet> requiredRuneSets) {
-        var missingAttribute = unmatchedRequiredValuePreference.getAttribute();
-        var priority = unmatchedRequiredValuePreference.getPriority();
+        var belowMinimumAttribute = unmatchedRequiredValuePreference.getAttribute();
         var runeSetsBonusesThaCanBeLost = getRuneSetBonusesThatCanBeLost(currentRuneSets, baseMonster);
         var requiredRuneSetsThatCanBeLost = getRequiredRuneSetsThatCanBeLost(currentRunes, requiredRuneSets);
 
         var highestAttributeGainRatio = BigDecimal.ZERO;
         var highestAttributeGainRatioSlot = 0;
-        var isEfficiencyDifferencePositive = false;
         var highestAttributeGainRatioRune = new RuneEfficiency();
+        var isEfficiencyDifferencePositive = false;
 
-        for (var slot : missingAttributeEfficiencyBySlotMap.keySet()) {
+        for (var slot : slotEfficiencyMap.keySet()) {
             try {
                 var currentRune = currentRunes.get(slot);
-                var currentRuneEfficiency = currentRune.getEfficiencyByPriority(priority);
-                var currentRuneAttributeBonus = currentRune.getLimitedAttributeBonusValue(missingAttribute);
+                var currentRuneEfficiency = currentRune.getEfficiency();
+                var currentRuneAttributeBonus = currentRune.getLimitedAttributeBonusValue(belowMinimumAttribute);
                 var minimumAttributeValues = onlyRequiredValuePreferences.stream()
                     .filter(buildPreference -> !buildPreference.equals(unmatchedRequiredValuePreference))
                     .collect(Collectors.toMap(BuildPreference::getAttribute, buildPreference -> {
@@ -257,11 +156,11 @@ public class OptimizerService {
                         return currentRune.getLimitedAttributeBonusValue(buildPreference.getAttribute()).subtract(BigDecimal.valueOf(extraValue));
                     }));
 
-                var slotMap = missingAttributeEfficiencyBySlotMap.get(slot);
-                var higherAttributeBonus = getHigherAttributeWithoutLosingPreviousOnes(slotMap, currentRune, unmatchedRequiredValuePreference, minimumAttributeValues, runeSetsBonusesThaCanBeLost, requiredRuneSetsThatCanBeLost);
+                var slotMap = slotEfficiencyMap.get(slot);
+                var higherAttributeBonus = getHigherAttributeWithoutMessingOthers(slotMap, currentRune, unmatchedRequiredValuePreference, minimumAttributeValues, runeSetsBonusesThaCanBeLost, requiredRuneSetsThatCanBeLost);
 
                 var nextRune = slotMap.get(higherAttributeBonus);
-                var nextRuneEfficiency = nextRune.getEfficiencyByPriority(priority);
+                var nextRuneEfficiency = nextRune.getEfficiency();
                 var attributeGain = higherAttributeBonus.subtract(currentRuneAttributeBonus);
 
                 if (isEfficiencyDifferencePositive || nextRuneEfficiency.compareTo(currentRuneEfficiency) >= 0) {
@@ -302,6 +201,58 @@ public class OptimizerService {
         return highestAttributeGainRatioRune;
     }
 
+    private RuneEfficiency getRuneWithLowerAttributeValue(BuildPreference unmatchedRequiredValuePreference, Map<Integer, RuneEfficiency> currentRunes, MonsterStats monsterStats, BaseMonster baseMonster,
+                                                          List<BuildPreference> onlyRequiredValuePreferences, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>> slotEfficiencyMap,
+                                                          Map<RuneSet, List<Rune>> currentRuneSets, List<RuneSet> requiredRuneSets) {
+        var runeSetsBonusesThaCanBeLost = getRuneSetBonusesThatCanBeLost(currentRuneSets, baseMonster);
+        var requiredRuneSetsThatCanBeLost = getRequiredRuneSetsThatCanBeLost(currentRunes, requiredRuneSets);
+
+        var highestEfficiency = BigDecimal.ZERO;
+        var highestEfficiencySlot = 0;
+        var highestEfficiencyRune = new RuneEfficiency();
+
+        for (var slot : slotEfficiencyMap.keySet()) {
+            try {
+                var currentRune = currentRunes.get(slot);
+                var currentRuneEfficiency = currentRune.getEfficiency();
+
+                var minimumAttributeValues = onlyRequiredValuePreferences.stream()
+                    .filter(buildPreference -> !buildPreference.equals(unmatchedRequiredValuePreference))
+                    .collect(Collectors.toMap(BuildPreference::getAttribute, buildPreference -> {
+                        var extraValue = monsterStats.getAttributeValue(buildPreference.getAttribute()) - buildPreference.getMinimumValue();
+                        return currentRune.getLimitedAttributeBonusValue(buildPreference.getAttribute()).subtract(BigDecimal.valueOf(extraValue));
+                    }));
+
+                var maximumAttributeValues = onlyRequiredValuePreferences.stream()
+                    .filter(buildPreference -> !buildPreference.equals(unmatchedRequiredValuePreference))
+                    .collect(Collectors.toMap(BuildPreference::getAttribute, buildPreference -> {
+                        var extraValue = buildPreference.getMaximumValue() - monsterStats.getAttributeValue(buildPreference.getAttribute());
+                        return currentRune.getLimitedAttributeBonusValue(buildPreference.getAttribute()).subtract(BigDecimal.valueOf(extraValue));
+                    }));
+
+                var slotMap = slotEfficiencyMap.get(slot);
+
+                var lowerAttributeBonus = getLowerAttributeWithoutMessingOthers(slotMap, currentRune, unmatchedRequiredValuePreference, minimumAttributeValues, maximumAttributeValues, runeSetsBonusesThaCanBeLost, requiredRuneSetsThatCanBeLost);
+
+                var nextRune = slotMap.get(lowerAttributeBonus);
+                var nextRuneEfficiency = nextRune.getEfficiency();
+                var efficiencyGain = nextRuneEfficiency.subtract(currentRuneEfficiency);
+
+                if (highestEfficiencySlot == 0 || efficiencyGain.compareTo(highestEfficiency) > 0) {
+                    highestEfficiency = efficiencyGain;
+                    highestEfficiencySlot = slot;
+                    highestEfficiencyRune = nextRune;
+                }
+
+            } catch (MoreEfficientRuneKeyNotFoundException ignored) {
+            }
+        }
+
+        if (highestEfficiencySlot == 0) throw new NoPossibleBuildException();
+
+        return highestEfficiencyRune;
+    }
+
     private List<RuneSet> getRequiredRuneSetsThatCanBeLost(Map<Integer, RuneEfficiency> currentRunes, List<RuneSet> requiredRuneSets) {
         return requiredRuneSets.stream()
             .collect(Collectors.groupingBy(Function.identity()))
@@ -328,9 +279,9 @@ public class OptimizerService {
             ));
     }
 
-    private BigDecimal getHigherAttributeWithoutLosingPreviousOnes(TreeMap<BigDecimal, RuneEfficiency> attributeEfficiencyMap, RuneEfficiency currentRune, BuildPreference unmatchedPreference,
-                                                                   Map<MonsterAttribute, BigDecimal> minimumAttributeValues, Map<RuneSet, BigDecimal> bonusRuneSetsAboutToBeLost,
-                                                                   List<RuneSet> requiredRuneSetAboutToBeLost) {
+    private BigDecimal getHigherAttributeWithoutMessingOthers(TreeMap<BigDecimal, RuneEfficiency> attributeEfficiencyMap, RuneEfficiency currentRune, BuildPreference unmatchedPreference,
+                                                              Map<MonsterAttribute, BigDecimal> minimumAttributeValues,
+                                                              Map<RuneSet, BigDecimal> bonusRuneSetsAboutToBeLost, List<RuneSet> requiredRuneSetAboutToBeLost) {
         var currentAttribute = unmatchedPreference.getAttribute();
         var runeSet = currentRune.getRune().getSet();
         var canLoseRuneSetBonus = bonusRuneSetsAboutToBeLost.containsKey(runeSet);
@@ -354,7 +305,7 @@ public class OptimizerService {
                 minimumAttributeValues.put(runeSet.getAttribute(), newMinimumValue);
             }
 
-            if (isLosingPreviousAttributeRequirements(minimumAttributeValues, rune.getValue())) {
+            if (isGoingBelowMinimumValues(minimumAttributeValues, rune.getValue())) {
                 continue;
             }
 
@@ -362,29 +313,16 @@ public class OptimizerService {
         }
     }
 
-    private boolean isLosingPreviousAttributeRequirements(Map<MonsterAttribute, BigDecimal> minimumAttributeValues, RuneEfficiency runeEfficiency) {
-        return minimumAttributeValues.entrySet().stream().anyMatch(entrySet -> {
-            var monsterAttribute = entrySet.getKey();
-            var minimumValue = entrySet.getValue();
-            var actualValue = runeEfficiency.getLimitedAttributeBonusValue(monsterAttribute);
-            return actualValue.compareTo(minimumValue) < 0;
-        });
-    }
-
-    private BigDecimal getMoreEfficientRuneKey(TreeMap<BigDecimal, RuneEfficiency> attributeEfficiencyMap, RuneEfficiency currentRune, BuildPreference currentBuildPreference,
-                                               Map<MonsterAttribute, BigDecimal> minimumAttributeValues, Map<RuneSet, BigDecimal> bonusRuneSetsThatCanBeLost,
-                                               List<RuneSet> requiredRuneSetsThaCanBeLost) {
-
-        var priority = currentBuildPreference.getPriority();
-        var currentAttribute = currentBuildPreference.getAttribute();
-        var lowerAttribute = currentRune.getLimitedAttributeBonusValue(currentAttribute);
+    private BigDecimal getLowerAttributeWithoutMessingOthers(TreeMap<BigDecimal, RuneEfficiency> attributeEfficiencyMap, RuneEfficiency currentRune, BuildPreference unmatchedPreference,
+                                                             Map<MonsterAttribute, BigDecimal> minimumAttributeValues, Map<MonsterAttribute, BigDecimal> maximumAttributeValues,
+                                                             Map<RuneSet, BigDecimal> bonusRuneSetsAboutToBeLost, List<RuneSet> requiredRuneSetAboutToBeLost) {
+        var currentAttribute = unmatchedPreference.getAttribute();
         var runeSet = currentRune.getRune().getSet();
-        var canLoseRuneSetBonus = bonusRuneSetsThatCanBeLost.containsKey(runeSet);
-        var canLoseRequiredSet = requiredRuneSetsThaCanBeLost.contains(runeSet);
-        var currentEfficiency = currentRune.getEfficiencyByPriority(currentBuildPreference.getPriority());
-        var efficiencyGain = BigDecimal.ZERO;
+        var canLoseRuneSetBonus = bonusRuneSetsAboutToBeLost.containsKey(runeSet);
+        var canLoseRequiredSet = requiredRuneSetAboutToBeLost.contains(runeSet);
+        var lowerAttribute = currentRune.getLimitedAttributeBonusValue(currentAttribute);
 
-        while (notGainingEfficiency(efficiencyGain)) {
+        while (true) {
             var rune = attributeEfficiencyMap.lowerEntry(lowerAttribute);
 
             if (rune == null)
@@ -395,24 +333,35 @@ public class OptimizerService {
             if (canLoseRequiredSet && !runeSet.equals(rune.getValue().getRune().getSet()))
                 continue;
 
-            if (canLoseRuneSetBonus && !runeSet.equals(rune.getValue().getRune().getSet()) && minimumAttributeValues.containsKey(runeSet.getAttribute())) {
+            if (canLoseRuneSetBonus && !runeSet.equals(rune.getValue().getRune().getSet()) && maximumAttributeValues.containsKey(runeSet.getAttribute())) {
                 var currentMinimumValue = minimumAttributeValues.get(runeSet.getAttribute());
-                var newMinimumValue = currentMinimumValue.add(bonusRuneSetsThatCanBeLost.get(runeSet));
-                log.info("c=OptimizeService m=getHigherAttributeWithoutLosingPreviousOnes message= Losing set {}, with a bonus of {}. Minimum value went from {} to {}", runeSet, bonusRuneSetsThatCanBeLost.get(runeSet), currentMinimumValue, newMinimumValue);
+                var newMinimumValue = currentMinimumValue.add(bonusRuneSetsAboutToBeLost.get(runeSet));
                 minimumAttributeValues.put(runeSet.getAttribute(), newMinimumValue);
             }
 
-            if (isLosingPreviousAttributeRequirements(minimumAttributeValues, rune.getValue())) {
+            if (isGoingBelowMinimumValues(minimumAttributeValues, rune.getValue()) || isGoingAboveMaximumValue(minimumAttributeValues, rune.getValue())) {
                 continue;
             }
 
-            efficiencyGain = rune.getValue().getEfficiencyByPriority(priority).subtract(currentEfficiency);
+            return lowerAttribute;
         }
-
-        return lowerAttribute;
     }
 
-    private boolean notGainingEfficiency(BigDecimal efficiencyGain) {
-        return efficiencyGain.compareTo(BigDecimal.ZERO) <= 0;
+    private boolean isGoingBelowMinimumValues(Map<MonsterAttribute, BigDecimal> minimumAttributeValues, RuneEfficiency runeEfficiency) {
+        return minimumAttributeValues.entrySet().stream().anyMatch(entrySet -> {
+            var monsterAttribute = entrySet.getKey();
+            var minimumValue = entrySet.getValue();
+            var actualValue = runeEfficiency.getLimitedAttributeBonusValue(monsterAttribute);
+            return actualValue.compareTo(minimumValue) < 0;
+        });
+    }
+
+    private boolean isGoingAboveMaximumValue(Map<MonsterAttribute, BigDecimal> maximumAttributeValues, RuneEfficiency runeEfficiency) {
+        return maximumAttributeValues.entrySet().stream().anyMatch(entrySet -> {
+            var monsterAttribute = entrySet.getKey();
+            var maximumValue = entrySet.getValue();
+            var actualValue = runeEfficiency.getLimitedAttributeBonusValue(monsterAttribute);
+            return maximumValue.compareTo(actualValue) < 0;
+        });
     }
 }

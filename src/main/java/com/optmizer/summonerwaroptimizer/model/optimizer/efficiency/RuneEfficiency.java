@@ -31,10 +31,7 @@ public class RuneEfficiency {
     @JsonIgnore
     private BuildStrategy buildStrategy;
 
-    @OneToMany(mappedBy = "runeEfficiency", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<PriorityEfficiency> priorityEfficiencies;
-
-    private BigDecimal completeEfficiency;
+    private BigDecimal efficiency;
 
     @ToString.Exclude
     @OneToMany(mappedBy = "runeEfficiency", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
@@ -53,13 +50,5 @@ public class RuneEfficiency {
     public String getMonsterName() {
         return buildStrategy.getMonsterName();
     }
-
-    @JsonIgnore
-    public BigDecimal getEfficiencyByPriority(Integer priority) {
-        return priorityEfficiencies.stream()
-            .filter(efficiency -> efficiency.getPriority().equals(priority))
-            .map(PriorityEfficiency::getEfficiency)
-            .findFirst()
-            .orElse(BigDecimal.ZERO);
-    }
+    
 }

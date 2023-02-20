@@ -59,12 +59,12 @@ public class RuneSetOptimizerService {
         return currentRunes.values()
             .stream()
             .filter(runeEfficiency -> !runeEfficiency.getRune().getSet().equals(runeSetMissingRunes))
-            .max(Comparator.comparing(replaceableRune -> replaceableRune.getCompleteEfficiency()
+            .max(Comparator.comparing(replaceableRune -> replaceableRune.getEfficiency()
                 .subtract(slotRuneEfficienciesMap.get(replaceableRune.getRune().getSlot())
                     .stream()
                     .filter(runeEfficiency -> runeSetMissingRunes.equals(runeEfficiency.getRune().getSet()))
-                    .max(Comparator.comparing(RuneEfficiency::getCompleteEfficiency))
-                    .map(RuneEfficiency::getCompleteEfficiency)
+                    .max(Comparator.comparing(RuneEfficiency::getEfficiency))
+                    .map(RuneEfficiency::getEfficiency)
                     .orElse(BigDecimal.ZERO))))
             .map(RuneEfficiency::getRune)
             .map(Rune::getSlot)
@@ -75,12 +75,12 @@ public class RuneSetOptimizerService {
         return currentRunes.values()
             .stream()
             .filter(runeEfficiency -> !requiredRuneSets.contains(runeEfficiency.getRune().getSet()))
-            .max(Comparator.comparing(replaceableRune -> replaceableRune.getCompleteEfficiency()
+            .max(Comparator.comparing(replaceableRune -> replaceableRune.getEfficiency()
                 .subtract(slotRuneEfficienciesMap.get(replaceableRune.getRune().getSlot())
                     .stream()
                     .filter(runeEfficiency -> runeSetMissingRunes.equals(runeEfficiency.getRune().getSet()))
-                    .max(Comparator.comparing(RuneEfficiency::getCompleteEfficiency))
-                    .map(RuneEfficiency::getCompleteEfficiency)
+                    .max(Comparator.comparing(RuneEfficiency::getEfficiency))
+                    .map(RuneEfficiency::getEfficiency)
                     .orElse(BigDecimal.ZERO))))
             .map(RuneEfficiency::getRune)
             .map(Rune::getSlot);
@@ -89,7 +89,7 @@ public class RuneSetOptimizerService {
     private RuneEfficiency getMostEfficientRuneReplacementForMissingRuneSet(List<RuneEfficiency> slotRuneEfficienciesMap, RuneSet runeSetMissingRunes) {
         return slotRuneEfficienciesMap.stream()
             .filter(runeEfficiency -> runeEfficiency.getRune().getSet().equals(runeSetMissingRunes))
-            .max(Comparator.comparing(RuneEfficiency::getCompleteEfficiency))
+            .max(Comparator.comparing(RuneEfficiency::getEfficiency))
             .orElseThrow(NoPossibleBuildException::new);
     }
 }
