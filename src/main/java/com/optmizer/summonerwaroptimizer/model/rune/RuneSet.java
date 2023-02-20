@@ -13,6 +13,7 @@ import static com.optmizer.summonerwaroptimizer.model.rune.EffectAggregationType
 @AllArgsConstructor
 public enum RuneSet {
 
+    ANY(0, MonsterAttribute.NONE, 0, NONE),
     ENERGY(2, MonsterAttribute.HIT_POINTS, 15, MULTIPLY),
     FATAL(4, MonsterAttribute.ATTACK, 35, MULTIPLY),
     BLADE(2, MonsterAttribute.CRITICAL_RATE, 12, SUM),

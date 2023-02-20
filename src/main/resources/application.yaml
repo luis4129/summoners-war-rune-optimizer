@@ -7,27 +7,70 @@ spring:
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
 buildStrategies:
-  - monster: 7400575165
+  - monster: 11965622274 #Lushen
+    priority: 1
     buildPreferences:
-      - type: ONLY_REQUIRED_VALUE
+      - type: WITHIN_REQUIRED_RANGE
         attribute: CRITICAL_RATE
         minimumValue: 100
+        priority: 1
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: SPEED
+        minimumValue: 223
+        priority: 2
       - type: AS_HIGH_AS_POSSIBLE
         attribute: ATTACK
       - type: AS_HIGH_AS_POSSIBLE
         attribute: CRITICAL_DAMAGE
-  - monster: 13761642597
+
+  - monster: 15203246381 #Kro
+    priority: 2
     buildPreferences:
-      - type: AS_HIGH_AS_POSSIBLE
-        attribute: DEFENSE
-      - type: ONLY_REQUIRED_VALUE
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: CRITICAL_RATE
+        minimumValue: 100
+        priority: 1
+      - type: WITHIN_REQUIRED_RANGE
         attribute: SPEED
-        minimumValue: 200
-  - monster: 15892716512
+        minimumValue: 148
+        priority: 2
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 14607903174 #Naomi
+    priority: 3
+    buildPreferences:
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: SPEED
+        minimumValue: 146
+        priority: 2
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 14068143793 #Loren
+    priority: 4
+    buildPreferences:
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: SPEED
+        minimumValue: 159
+        priority: 1
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_RATE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 12230300232 #Fran
+    priority: 5
     buildPreferences:
       - type: AS_HIGH_AS_POSSIBLE
-        attribute: DEFENSE
-  - monster: 17280366373
-    buildPreferences:
+        attribute: SPEED
       - type: AS_HIGH_AS_POSSIBLE
-        attribute: DEFENSE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED

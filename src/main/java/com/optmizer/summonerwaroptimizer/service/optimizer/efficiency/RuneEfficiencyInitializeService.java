@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.optimizer.efficiency;
 
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
-import com.optmizer.summonerwaroptimizer.model.optimizer.RuneEfficiency;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.*;
 import com.optmizer.summonerwaroptimizer.model.rune.Rune;
 import com.optmizer.summonerwaroptimizer.service.RuneService;
 import com.optmizer.summonerwaroptimizer.service.optimizer.BuildStrategyService;
@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -43,42 +46,98 @@ public class RuneEfficiencyInitializeService {
 
         for (BuildStrategy buildStrategy : buildStrategies) {
             for (Rune rune : runes) {
-
-                var runeEfficiency = RuneEfficiency.builder()
-                    .rune(rune)
-                    .buildStrategy(buildStrategy)
-                    .efficiency(getEfficiencyValue(buildStrategy, rune))
-                    .build();
-
+                var runeEfficiency = getRuneEfficiency(buildStrategy, rune);
                 runeEfficiencyService.save(runeEfficiency);
             }
         }
         log.info("c=RuneEfficiencyInitializeService m=initializeRuneEfficiencies message=Complete");
     }
 
-    private BigDecimal getEfficiencyValue(BuildStrategy buildStrategy, Rune rune) {
-        var usefulAttributes = buildStrategy.getUsefulAttributesBonus();
+    private RuneEfficiency getRuneEfficiency(BuildStrategy buildStrategy, Rune rune) {
+        var usefulMonsterAttributesByPriorityMap = buildStrategyService.getUsefulAttributesByPriorityMap(buildStrategy);
+        var usefulBonusAttributesByPriorityMap = buildStrategyService.getUsefulAttributesBonusByPriorityMap(buildStrategy);
+        var remainingAttributesByPriorityMap = buildStrategyService.getUsefulAttributesBonusByPriorityMap(buildStrategy);
+        var limitedAttributes = buildStrategyService.getLimitedAttributes(buildStrategy);
         var baseMonster = buildStrategy.getMonster().getBaseMonster();
 
-        var mainStatEfficiencyRatio = mainStatEfficiencyService.getSubStatEfficiencyRatio(buildStrategy, rune, usefulAttributes, baseMonster);
-        var subStatsEfficiencyRatio = subStatEfficiencyService.getSubStatEfficiencyRatio(buildStrategy, rune, usefulAttributes, baseMonster);
-        var prefixStatEfficiencyRatio = prefixStatEfficiencyService.getSubStatEfficiencyRatioValue(buildStrategy, rune.getPrefixStat(), usefulAttributes, baseMonster);
-        var runeSetEfficiencyRatio = runeSetEfficiencyService.getSubStatEfficiencyRatio(buildStrategy, rune.getSet());
+        var mainStatEfficiencyRatio = mainStatEfficiencyService.getSubStatEfficiencyRatio(baseMonster, rune, usefulBonusAttributesByPriorityMap, limitedAttributes, remainingAttributesByPriorityMap);
+        var subStatsEfficiencyRatio = subStatEfficiencyService.getSubStatEfficiencyRatio(baseMonster, rune, usefulBonusAttributesByPriorityMap, limitedAttributes, remainingAttributesByPriorityMap);
+        var prefixStatEfficiencyRatio = prefixStatEfficiencyService.getSubStatEfficiencyRatioValue(baseMonster, rune.getPrefixStat(), usefulBonusAttributesByPriorityMap, limitedAttributes, remainingAttributesByPriorityMap);
+        var runeSetEfficiencyRatio = runeSetEfficiencyService.getSubStatEfficiencyRatio(baseMonster, rune.getSet(), usefulMonsterAttributesByPriorityMap, limitedAttributes, buildStrategy.getRuneSets());
 
-        var bonusEfficiencyRatio = mainStatEfficiencyRatio.getEfficiencyRatio()
-            .add(subStatsEfficiencyRatio.getEfficiencyRatio())
-            .add(prefixStatEfficiencyRatio.getEfficiencyRatio())
-            .add(runeSetEfficiencyRatio.getEfficiencyRatio());
+        var priorityEfficiencies = new ArrayList<PriorityEfficiency>();
 
-        var maxBonusEfficiencyRatio = mainStatEfficiencyRatio.getMaxEfficiencyRatio()
-            .add(subStatsEfficiencyRatio.getMaxEfficiencyRatio())
-            .add(prefixStatEfficiencyRatio.getMaxEfficiencyRatio())
-            .add(runeSetEfficiencyRatio.getMaxEfficiencyRatio());
+        for (var priority = 0; priority < usefulBonusAttributesByPriorityMap.size(); priority++) {
+            var priorityEfficiencyRatio = sumEfficiencies(priority, mainStatEfficiencyRatio, subStatsEfficiencyRatio, prefixStatEfficiencyRatio, runeSetEfficiencyRatio);
+            var priorityMaxEfficiencyRatio = sumMaxEfficiencies(priority, mainStatEfficiencyRatio, subStatsEfficiencyRatio, prefixStatEfficiencyRatio, runeSetEfficiencyRatio);
 
-        if (BigDecimal.ZERO.equals(maxBonusEfficiencyRatio))
-            return BigDecimal.ZERO;
+            var priorityEfficiencyValue = BigDecimal.ZERO.equals(priorityMaxEfficiencyRatio) ?
+                BigDecimal.ZERO :
+                priorityEfficiencyRatio.divide(priorityMaxEfficiencyRatio, 4, RoundingMode.DOWN).multiply(BigDecimal.valueOf(100));
 
-        return bonusEfficiencyRatio.divide(maxBonusEfficiencyRatio, 3, RoundingMode.DOWN);
+            var priorityEfficiency = PriorityEfficiency.builder()
+                .priority(priority)
+                .efficiency(priorityEfficiencyValue)
+                .build();
+
+            priorityEfficiencies.add(priorityEfficiency);
+        }
+
+        var limitedAttributeBonuses = getLimitedAttributeBonuses(mainStatEfficiencyRatio,
+            subStatsEfficiencyRatio,
+            prefixStatEfficiencyRatio,
+            runeSetEfficiencyRatio);
+
+        var runeEfficiency = RuneEfficiency.builder()
+            .rune(rune)
+            .buildStrategy(buildStrategy)
+            .completeEfficiency(priorityEfficiencies.get(0).getEfficiency())
+            .priorityEfficiencies(priorityEfficiencies)
+            .limitedAttributeBonuses(limitedAttributeBonuses)
+            .build();
+
+        runeEfficiency.getLimitedAttributeBonuses().forEach(limitedAttributeBonus -> limitedAttributeBonus.setRuneEfficiency(runeEfficiency));
+        runeEfficiency.getPriorityEfficiencies().forEach(efficiency -> efficiency.setRuneEfficiency(runeEfficiency));
+
+        return runeEfficiency;
+    }
+
+    private BigDecimal sumEfficiencies(Integer priority, RuneEfficiencyRatio... runeEfficiencyRatios) {
+        return Arrays.stream(runeEfficiencyRatios)
+            .map(RuneEfficiencyRatio::getPriorityEfficiencyRatios)
+            .map(priorityEfficiencyRatios -> priorityEfficiencyRatios.get(priority))
+            .map(PriorityEfficiencyRatio::getEfficiencyRatio)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal sumMaxEfficiencies(Integer priority, RuneEfficiencyRatio... runeEfficiencyRatios) {
+        return Arrays.stream(runeEfficiencyRatios)
+            .map(RuneEfficiencyRatio::getPriorityEfficiencyRatios)
+            .map(priorityEfficiencyRatios -> priorityEfficiencyRatios.get(priority))
+            .map(PriorityEfficiencyRatio::getMaxEfficiencyRatio)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private List<LimitedAttributeBonus> getLimitedAttributeBonuses(RuneEfficiencyRatio... runes) {
+        return Stream.of(runes)
+            .map(RuneEfficiencyRatio::getLimitedAttributeBonuses)
+            .flatMap(Collection::stream)
+            .collect(Collectors.groupingBy(LimitedAttributeBonus::getMonsterAttribute))
+            .entrySet()
+            .stream()
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                entry -> entry.getValue().stream()
+                    .map(LimitedAttributeBonus::getBonus)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add)))
+            .entrySet()
+            .stream()
+            .map(entrySet -> LimitedAttributeBonus.builder()
+                .monsterAttribute(entrySet.getKey())
+                .bonus(entrySet.getValue())
+                .build())
+            .toList();
+
     }
 
 }

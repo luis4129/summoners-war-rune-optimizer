@@ -1,11 +1,8 @@
 package com.optmizer.summonerwaroptimizer.service.optimizer.efficiency;
 
 import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
-import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.BonusMaxEfficiency;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.RuneSlot;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.StatEfficiencyRatio;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.SubStatBonusMaxEfficiency;
+import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.*;
 import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import com.optmizer.summonerwaroptimizer.model.rune.Rune;
 import com.optmizer.summonerwaroptimizer.model.rune.SubStat;
@@ -27,29 +24,79 @@ public class SubStatEfficiencyService {
 
     private final Map<String, BonusMaxEfficiency> strategyMaxEfficiencyRatioMap = new HashMap<>();
 
-    public StatEfficiencyRatio getSubStatEfficiencyRatio(BuildStrategy buildStrategy, Rune rune, List<BonusAttribute> usefulAttributes, BaseMonster baseMonster) {
-        var maxSubStatsEfficiencyRatio = getMaxEfficiencyRatio(usefulAttributes, rune.getSlot(), baseMonster);
-        var subStatsEfficiencyRatio = getSubStatEfficiencyRatio(buildStrategy, rune.getSubStats(), baseMonster);
+    public RuneEfficiencyRatio getSubStatEfficiencyRatio(BaseMonster baseMonster, Rune rune,
+                                                         Map<Integer, List<BonusAttribute>> usefulAttributesByPriorityMap,
+                                                         List<MonsterAttribute> limitedAttributes,
+                                                         Map<Integer, List<BonusAttribute>> remainingAttributesByPriorityMap) {
+        var limitedAttributeBonuses = getLimitedAttributeBonuses(limitedAttributes, rune.getSubStats(), baseMonster);
+        var priorityEfficiencyRatios = remainingAttributesByPriorityMap.entrySet()
+            .stream()
+            .map(entry -> getSubStatPriorityEfficiencyRatio(usefulAttributesByPriorityMap, entry.getKey(), rune, entry.getValue(), baseMonster))
+            .toList();
 
-        return StatEfficiencyRatio.builder()
+        return RuneEfficiencyRatio.builder()
+            .limitedAttributeBonuses(limitedAttributeBonuses)
+            .priorityEfficiencyRatios(priorityEfficiencyRatios)
+            .build();
+    }
+
+    public PriorityEfficiencyRatio getSubStatPriorityEfficiencyRatio(Map<Integer, List<BonusAttribute>> usefulAttributesByPriorityMap, Integer priority, Rune rune, List<BonusAttribute> usefulAttributes, BaseMonster baseMonster) {
+        var maxSubStatsEfficiencyRatio = getMaxEfficiencyRatio(usefulAttributes, rune.getSlot(), baseMonster);
+        var subStatsEfficiencyRatio = getSubStatEfficiencyRatio(usefulAttributesByPriorityMap, priority, rune.getSubStats(), baseMonster);
+
+        return PriorityEfficiencyRatio.builder()
+            .priority(priority)
             .efficiencyRatio(subStatsEfficiencyRatio)
             .maxEfficiencyRatio(maxSubStatsEfficiencyRatio)
             .build();
     }
 
 
-    private BigDecimal getSubStatEfficiencyRatio(BuildStrategy buildStrategy, List<SubStat> subStats, BaseMonster baseMonster) {
+    private BigDecimal getSubStatEfficiencyRatio(Map<Integer, List<BonusAttribute>> usefulAttributesByPriorityMap, Integer priority, List<SubStat> subStats, BaseMonster baseMonster) {
         return subStats
             .stream()
-            .filter(subStat -> buildStrategy.getUsefulAttributesBonus().contains(subStat.getBonusAttribute()))
-            .map(attribute -> getSubStatEfficiencyRatio(attribute, baseMonster))
+            .filter(subStat -> usefulAttributesByPriorityMap.get(priority).contains(subStat.getBonusAttribute()))
+            .map(subStat -> getSubStatEfficiencyRatio(subStat, baseMonster))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     private BigDecimal getSubStatEfficiencyRatio(SubStat subStat, BaseMonster baseMonster) {
-        var fullyMaxedSubStatBonus = getFullyMaxedSubStatBonus(subStat.getBonusAttribute(), baseMonster);
+        var fullyGrindedValue = subStat.getFullyGrindedValue();
+        var maxPossibleSubStatBonus = getFullyMaxedSubStatBonus(subStat.getBonusAttribute(), baseMonster);
 
-        return subStat.getFullyGrindedValue().divide(fullyMaxedSubStatBonus, 3, RoundingMode.DOWN);
+        return fullyGrindedValue.divide(maxPossibleSubStatBonus, 4, RoundingMode.DOWN);
+    }
+
+    private List<LimitedAttributeBonus> getLimitedAttributeBonuses(List<MonsterAttribute> limitedAttributes, List<SubStat> subStats, BaseMonster baseMonster) {
+        return subStats
+            .stream()
+            .filter(subStat -> limitedAttributes.contains(subStat.getBonusAttribute().getMonsterAttribute()))
+            .map(attribute -> getLimitedAttributeBonus(attribute, baseMonster))
+            .toList();
+    }
+
+    private LimitedAttributeBonus getLimitedAttributeBonus(SubStat subStat, BaseMonster baseMonster) {
+        var bonusAttribute = subStat.getBonusAttribute();
+
+        var fullyGrindedValue = subStat.getFullyGrindedValue();
+        var flatAttributeBonus = getFlatAttributeBonus(bonusAttribute, baseMonster, fullyGrindedValue);
+
+        return LimitedAttributeBonus.builder()
+            .monsterAttribute(bonusAttribute.getMonsterAttribute())
+            .bonus(flatAttributeBonus)
+            .build();
+    }
+
+    private BigDecimal getFlatAttributeBonus(BonusAttribute bonusAttribute, BaseMonster baseMonster, BigDecimal attributeBonus) {
+        return switch (bonusAttribute) {
+            case HIT_POINTS, ATTACK, DEFENSE -> {
+                var monsterAttribute = bonusAttribute.getMonsterAttribute();
+                var baseAttributeValue = baseMonster.getAttributeValue(monsterAttribute);
+
+                yield bonusAttribute.getEffectAggregationType().calculate(attributeBonus.intValue(), baseAttributeValue);
+            }
+            default -> attributeBonus;
+        };
     }
 
 
@@ -106,7 +153,7 @@ public class SubStatEfficiencyService {
         var maxGrindedSubStatBonus = attribute.getMaxGrindedSubStatBonus();
         var bestTotalSubStatBonus = getFullyMaxedSubStatBonus(attribute, baseMonster);
 
-        var maxEfficiency = maxGrindedSubStatBonus.divide(bestTotalSubStatBonus, 3, RoundingMode.DOWN);
+        var maxEfficiency = maxGrindedSubStatBonus.divide(bestTotalSubStatBonus, 4, RoundingMode.DOWN);
 
         return BonusMaxEfficiency.builder()
             .attribute(attribute)
@@ -119,8 +166,8 @@ public class SubStatEfficiencyService {
         var fullyMaxedSubStatBonus = attribute.getFullyMaxedSubStatBonus();
         var bestTotalSubStatBonus = getFullyMaxedSubStatBonus(attribute, baseMonster);
 
-        var maxEfficiency = maxGrindedSubStatBonus.divide(bestTotalSubStatBonus, 3, RoundingMode.DOWN);
-        var fullMaxEfficiency = fullyMaxedSubStatBonus.divide(bestTotalSubStatBonus, 3, RoundingMode.DOWN);
+        var maxEfficiency = maxGrindedSubStatBonus.divide(bestTotalSubStatBonus, 4, RoundingMode.DOWN);
+        var fullMaxEfficiency = fullyMaxedSubStatBonus.divide(bestTotalSubStatBonus, 4, RoundingMode.DOWN);
 
         return SubStatBonusMaxEfficiency.builder()
             .attribute(attribute)

@@ -1,5 +1,6 @@
 package com.optmizer.summonerwaroptimizer.config;
 
+import com.optmizer.summonerwaroptimizer.service.RuneService;
 import com.optmizer.summonerwaroptimizer.service.integration.swarfarm.AccountImportService;
 import com.optmizer.summonerwaroptimizer.service.integration.swarfarm.BaseMonsterImportService;
 import com.optmizer.summonerwaroptimizer.service.optimizer.efficiency.RuneEfficiencyInitializeService;
@@ -25,11 +26,15 @@ public class InitializeDatabase implements ApplicationListener<ApplicationReadyE
     @Autowired
     private RuneEfficiencyInitializeService runeEfficiencyInitializeService;
 
+    @Autowired
+    private RuneService runeService;
+
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
         baseMonsterImportService.importBestiaryData();
         accountImportService.importAccountData();
         buildStrategyInitializeService.initializeBuildStrategies();
         runeEfficiencyInitializeService.initializeRuneEfficiencies();
+        runeService.unequipAllRunes();
     }
 }

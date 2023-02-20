@@ -1,6 +1,7 @@
 package com.optmizer.summonerwaroptimizer.service.simulation;
 
 import com.optmizer.summonerwaroptimizer.model.build.Build;
+import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
 import com.optmizer.summonerwaroptimizer.model.monster.Monster;
 import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
 import com.optmizer.summonerwaroptimizer.resource.response.MonsterStats;
@@ -35,6 +36,10 @@ public class MonsterBuildService {
         var baseMonster = monster.getBaseMonster();
         var build = monster.getBuild();
 
+        return getMonsterStats(baseMonster, build);
+    }
+
+    public MonsterStats getMonsterStats(BaseMonster baseMonster, Build build) {
         var hitPoints = getAttributeValue(MonsterAttribute.HIT_POINTS, baseMonster.getHitPoints(), build);
         var attack = getAttributeValue(MonsterAttribute.ATTACK, baseMonster.getAttack(), build);
         var defense = getAttributeValue(MonsterAttribute.DEFENSE, baseMonster.getDefense(), build);
@@ -70,5 +75,4 @@ public class MonsterBuildService {
             .setScale(0, RoundingMode.UP)
             .intValue();
     }
-
 }

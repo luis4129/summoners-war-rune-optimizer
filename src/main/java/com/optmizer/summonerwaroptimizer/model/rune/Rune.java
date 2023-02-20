@@ -3,10 +3,7 @@ package com.optmizer.summonerwaroptimizer.model.rune;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.optmizer.summonerwaroptimizer.model.build.Build;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -24,6 +21,8 @@ public class Rune {
     private Long swarfarmId;
 
     @JsonIgnore
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     private Build build;
 

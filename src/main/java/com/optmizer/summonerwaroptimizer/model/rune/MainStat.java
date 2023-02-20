@@ -1,11 +1,9 @@
 package com.optmizer.summonerwaroptimizer.model.rune;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.MainStatMaxBonus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 
@@ -22,6 +20,11 @@ public class MainStat {
     @JsonIgnore
     private Long id;
 
+    @OneToOne
+    @JsonIgnore
+    @ToString.Exclude
+    private Rune rune;
+
     @Column(name = "stat_value")
     private Integer value;
 
@@ -29,7 +32,15 @@ public class MainStat {
 
     @JsonIgnore
     public BigDecimal getBonusAttributeValue(Integer baseAttributeValue) {
-        return bonusAttribute.getEffectAggregationType().calculate(baseAttributeValue, this.value);
+        var fullyLeveledBonus = getFullyLeveledGradeBonus(bonusAttribute, rune.getGrade());
+        return bonusAttribute.getEffectAggregationType().calculate(baseAttributeValue, fullyLeveledBonus);
+    }
+
+    private Integer getFullyLeveledGradeBonus(BonusAttribute bonusAttribute, Integer grade) {
+        return MainStatMaxBonus.valueOf(bonusAttribute.name())
+            .getMaxGradeBonusList()
+            .get(grade)
+            .intValue();
     }
 
 

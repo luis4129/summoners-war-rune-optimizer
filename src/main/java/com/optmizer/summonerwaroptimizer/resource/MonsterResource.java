@@ -1,7 +1,7 @@
 package com.optmizer.summonerwaroptimizer.resource;
 
 import com.optmizer.summonerwaroptimizer.model.monster.Monster;
-import com.optmizer.summonerwaroptimizer.model.optimizer.RuneEfficiency;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.RuneEfficiency;
 import com.optmizer.summonerwaroptimizer.resource.response.MonsterStats;
 import com.optmizer.summonerwaroptimizer.service.MonsterService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,9 +34,9 @@ public class MonsterResource {
         return monsterService.getMonsterStats(swarfarmId);
     }
 
-    @GetMapping("/{id}/runes/efficiency")
-    public List<RuneEfficiency> getRunesEfficiency(@PathVariable("id") Long swarfarmId) {
-        return monsterService.getRunesEfficiency(swarfarmId);
+    @GetMapping("{id}/efficiency")
+    public List<RuneEfficiency> runeEfficiencies(@PathVariable("id") Long swarfarmId) {
+        return monsterService.getMonsterEfficiency(swarfarmId);
     }
 
 }
