@@ -11,8 +11,9 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StatEfficiencyRatio {
+public class PriorityEfficiencyRatio {
 
+    private Integer priority;
     private BigDecimal efficiencyRatio;
     private BigDecimal maxEfficiencyRatio;
 

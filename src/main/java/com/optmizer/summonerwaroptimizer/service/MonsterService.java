@@ -1,10 +1,9 @@
 package com.optmizer.summonerwaroptimizer.service;
 
 import com.optmizer.summonerwaroptimizer.model.monster.Monster;
-import com.optmizer.summonerwaroptimizer.model.optimizer.RuneEfficiency;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.RuneEfficiency;
 import com.optmizer.summonerwaroptimizer.repository.MonsterRepository;
 import com.optmizer.summonerwaroptimizer.resource.response.MonsterStats;
-import com.optmizer.summonerwaroptimizer.service.optimizer.BuildStrategyService;
 import com.optmizer.summonerwaroptimizer.service.optimizer.efficiency.RuneEfficiencyService;
 import com.optmizer.summonerwaroptimizer.service.simulation.MonsterBuildService;
 import lombok.extern.slf4j.Slf4j;
@@ -26,15 +25,16 @@ public class MonsterService {
     @Autowired
     private RuneEfficiencyService runeEfficiencyService;
 
-    @Autowired
-    private BuildStrategyService buildStrategyService;
-
     public Monster findBySwarmFarmId(Long swarfarmId) {
         return monsterRepository.findBySwarfarmId(swarfarmId);
     }
 
     public List<Monster> findAll() {
         return monsterRepository.findAll();
+    }
+
+    public void save(Monster monster) {
+        monsterRepository.save(monster);
     }
 
     public void saveAll(List<Monster> monsters) {
@@ -45,10 +45,9 @@ public class MonsterService {
         var monster = findBySwarmFarmId(swarfarmId);
 
         return monsterBuildService.getMonsterStats(monster);
-
     }
 
-    public List<RuneEfficiency> getRunesEfficiency(Long swarfarmId) {
-        return runeEfficiencyService.findBySwarfarmId(swarfarmId);
+    public List<RuneEfficiency> getMonsterEfficiency(Long swarfarmId) {
+        return runeEfficiencyService.findByMonsterSwarfarmId(swarfarmId);
     }
 }

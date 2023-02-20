@@ -10,6 +10,7 @@ import java.util.List;
 public class YamlBuildStrategy {
 
     private Long monster;
-    private List<RuneSet> runeSets;
+    private Integer priority;
+    private List<RuneSet> sets;
     private List<BuildPreference> buildPreferences;
 }

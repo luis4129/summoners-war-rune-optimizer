@@ -13,6 +13,7 @@ public class MainStatBonusService {
     public BigDecimal getMainStatBonus(MonsterAttribute monsterAttribute, Integer baseMonsterAttributeValue, Build build) {
         return build.getRunes()
             .stream()
+            .peek(rune -> rune.getMainStat().setRune(rune))
             .map(Rune::getMainStat)
             .filter(mainStat -> mainStat.getBonusAttribute().getMonsterAttribute().equals(monsterAttribute))
             .map(mainStat -> mainStat.getBonusAttributeValue(baseMonsterAttributeValue))

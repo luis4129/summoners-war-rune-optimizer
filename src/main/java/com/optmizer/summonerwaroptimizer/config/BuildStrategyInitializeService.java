@@ -1,5 +1,6 @@
 package com.optmizer.summonerwaroptimizer.config;
 
+import com.optmizer.summonerwaroptimizer.model.optimizer.BuildPreferenceType;
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
 import com.optmizer.summonerwaroptimizer.service.MonsterService;
 import com.optmizer.summonerwaroptimizer.service.optimizer.BuildStrategyService;
@@ -41,11 +42,13 @@ public class BuildStrategyInitializeService {
 
         var buildStrategy = BuildStrategy.builder()
             .monster(monsterService.findBySwarmFarmId(config.getMonster()))
-            .runeSets(config.getRuneSets())
+            .priority(config.getPriority())
+            .runeSets(config.getSets())
             .buildPreferences(buildPreferences)
             .build();
 
         buildPreferences.forEach(buildPreference -> buildPreference.setBuildStrategy(buildStrategy));
+        buildPreferences.stream().filter(buildPreference -> buildPreference.getType().equals(BuildPreferenceType.AS_HIGH_AS_POSSIBLE)).forEach(buildPreference -> buildPreference.setPriority(0));
 
         return buildStrategy;
     }

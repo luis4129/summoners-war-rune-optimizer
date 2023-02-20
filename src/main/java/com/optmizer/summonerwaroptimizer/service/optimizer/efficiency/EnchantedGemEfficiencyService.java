@@ -43,7 +43,7 @@ public class EnchantedGemEfficiencyService {
         var maxEnchantmentBonus = attribute.getMaxEnchantmentSubStatBonus();
         var maxTotalSubStatBonus = getFullyMaxedSubStatBonus(attribute, baseMonster);
 
-        var maxEfficiencyRatio = maxEnchantmentBonus.divide(maxTotalSubStatBonus, 3, RoundingMode.DOWN);
+        var maxEfficiencyRatio = maxEnchantmentBonus.divide(maxTotalSubStatBonus, 4, RoundingMode.DOWN);
         return BonusMaxEfficiency.builder()
             .attribute(attribute)
             .ratio(maxEfficiencyRatio)

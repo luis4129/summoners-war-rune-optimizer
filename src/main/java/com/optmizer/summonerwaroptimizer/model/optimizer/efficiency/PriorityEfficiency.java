@@ -1,31 +1,30 @@
-package com.optmizer.summonerwaroptimizer.model.optimizer;
+package com.optmizer.summonerwaroptimizer.model.optimizer.efficiency;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Data
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BuildPreference {
+public class PriorityEfficiency {
 
     @Id
+    @JsonIgnore
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @JsonIgnore
+    @ManyToOne
     @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    private BuildStrategy buildStrategy;
+    private RuneEfficiency runeEfficiency;
 
-    private BuildPreferenceType type;
-    private MonsterAttribute attribute;
-
-    private Integer minimumValue;
     private Integer priority;
-
-
+    private List<MonsterAttribute> attributes;
+    private BigDecimal efficiency;
 }

@@ -1,9 +1,11 @@
 package com.optmizer.summonerwaroptimizer.service.optimizer.efficiency;
 
 import com.optmizer.summonerwaroptimizer.model.monster.BaseMonster;
-import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
+import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
 import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.BonusMaxEfficiency;
-import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.StatEfficiencyRatio;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.LimitedAttributeBonus;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.PriorityEfficiencyRatio;
+import com.optmizer.summonerwaroptimizer.model.optimizer.efficiency.RuneEfficiencyRatio;
 import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import com.optmizer.summonerwaroptimizer.model.rune.PrefixStat;
 import lombok.extern.slf4j.Slf4j;
@@ -20,21 +22,37 @@ public class PrefixStatEfficiencyService {
 
     private final Map<String, BigDecimal> strategyMaxEfficiencyRatioMap = new HashMap<>();
 
-    public StatEfficiencyRatio getSubStatEfficiencyRatioValue(BuildStrategy buildStrategy, PrefixStat prefixStat, List<BonusAttribute> usefulAttributes, BaseMonster baseMonster) {
-        var maxEfficiencyRatio = getBestPrefixStatEfficiencyRatio(usefulAttributes);
+    public RuneEfficiencyRatio getSubStatEfficiencyRatioValue(BaseMonster baseMonster, PrefixStat prefixStat,
+                                                              Map<Integer, List<BonusAttribute>> usefulAttributesByPriorityMap,
+                                                              List<MonsterAttribute> limitedAttributes,
+                                                              Map<Integer, List<BonusAttribute>> remainingAttributesByPriorityMap) {
+        var limitedAttributeBonuses = getLimitedAttributeBonuses(prefixStat, baseMonster, limitedAttributes);
+        var priorityEfficiencyRatios = remainingAttributesByPriorityMap.entrySet()
+            .stream()
+            .map(entry -> getSubStatPriorityEfficiencyRatioValue(usefulAttributesByPriorityMap, entry.getKey(), prefixStat, entry.getValue()))
+            .toList();
 
-        if (Objects.isNull(prefixStat) || !buildStrategy.getUsefulAttributesBonus().contains(prefixStat.getBonusAttribute())) {
-            return StatEfficiencyRatio.builder()
+        return RuneEfficiencyRatio.builder()
+            .limitedAttributeBonuses(limitedAttributeBonuses)
+            .priorityEfficiencyRatios(priorityEfficiencyRatios)
+            .build();
+    }
+
+    public PriorityEfficiencyRatio getSubStatPriorityEfficiencyRatioValue(Map<Integer, List<BonusAttribute>> usefulAttributesByPriorityMap, Integer priority, PrefixStat prefixStat, List<BonusAttribute> remainingAttributes) {
+        var maxEfficiencyRatio = getBestPrefixStatEfficiencyRatio(remainingAttributes);
+
+        if (Objects.isNull(prefixStat) || !usefulAttributesByPriorityMap.get(priority).contains(prefixStat.getBonusAttribute())) {
+            return PriorityEfficiencyRatio.builder()
+                .priority(priority)
                 .efficiencyRatio(BigDecimal.ZERO)
                 .maxEfficiencyRatio(maxEfficiencyRatio)
                 .build();
         }
 
-        var bonusAttribute = prefixStat.getBonusAttribute();
-        var efficiencyRatio = getPrefixStatEfficiencyRatio(bonusAttribute, prefixStat.getValue());
+        var efficiencyRatio = getPrefixStatEfficiencyRatio(prefixStat);
 
-
-        return StatEfficiencyRatio.builder()
+        return PriorityEfficiencyRatio.builder()
+            .priority(priority)
             .efficiencyRatio(efficiencyRatio)
             .maxEfficiencyRatio(maxEfficiencyRatio)
             .build();
@@ -64,17 +82,53 @@ public class PrefixStatEfficiencyService {
         var maxTotalSubStatBonus = attribute.getMaxAncientStart();
         var fullyMaxedSubStatBonus = attribute.getFullyMaxedSubStatBonus();
 
-        var maxEfficiencyRatio = maxTotalSubStatBonus.divide(fullyMaxedSubStatBonus, 3, RoundingMode.DOWN);
+        var maxEfficiencyRatio = maxTotalSubStatBonus.divide(fullyMaxedSubStatBonus, 4, RoundingMode.DOWN);
         return BonusMaxEfficiency.builder()
             .attribute(attribute)
             .ratio(maxEfficiencyRatio)
             .build();
     }
 
-    private BigDecimal getPrefixStatEfficiencyRatio(BonusAttribute attribute, Integer value) {
-        var fullyMaxedSubStatBonus = attribute.getFullyMaxedSubStatBonus();
+    private BigDecimal getPrefixStatEfficiencyRatio(PrefixStat prefixStat) {
+        var bonusAttribute = prefixStat.getBonusAttribute();
 
-        return BigDecimal.valueOf(value).divide(fullyMaxedSubStatBonus, 3, RoundingMode.DOWN);
+        var value = prefixStat.getValue();
+        var fullyMaxedSubStatBonus = bonusAttribute.getFullyMaxedSubStatBonus();
+
+        return BigDecimal.valueOf(value).divide(fullyMaxedSubStatBonus, 4, RoundingMode.DOWN);
+    }
+
+    private List<LimitedAttributeBonus> getLimitedAttributeBonuses(PrefixStat prefixStat, BaseMonster baseMonster, List<MonsterAttribute> limitedAttributes) {
+        if (prefixStat == null)
+            return Collections.emptyList();
+
+        var bonusAttribute = prefixStat.getBonusAttribute();
+        var monsterAttribute = bonusAttribute.getMonsterAttribute();
+
+        if (!limitedAttributes.contains(monsterAttribute))
+            return Collections.emptyList();
+
+        var value = prefixStat.getValue();
+        var flatAttributeBonus = getFlatAttributeBonus(bonusAttribute, baseMonster, value);
+
+        var attributeBonus = LimitedAttributeBonus.builder()
+            .monsterAttribute(bonusAttribute.getMonsterAttribute())
+            .bonus(flatAttributeBonus)
+            .build();
+
+        return List.of(attributeBonus);
+    }
+
+    private BigDecimal getFlatAttributeBonus(BonusAttribute bonusAttribute, BaseMonster baseMonster, Integer attributeBonus) {
+        return switch (bonusAttribute) {
+            case HIT_POINTS, ATTACK, DEFENSE -> {
+                var monsterAttribute = bonusAttribute.getMonsterAttribute();
+                var baseAttributeValue = baseMonster.getAttributeValue(monsterAttribute);
+
+                yield bonusAttribute.getEffectAggregationType().calculate(attributeBonus, baseAttributeValue);
+            }
+            default -> BigDecimal.valueOf(attributeBonus);
+        };
     }
 
     private String getAttributesKey(List<BonusAttribute> usefulAttributes) {

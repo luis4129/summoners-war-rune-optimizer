@@ -1,16 +1,15 @@
 package com.optmizer.summonerwaroptimizer.model.monster;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Builder
 @NoArgsConstructor
@@ -35,5 +34,20 @@ public class BaseMonster {
     private Integer criticalDamage;
     private Integer resistance;
     private Integer accuracy;
+
+    @JsonIgnore
+    public Integer getAttributeValue(MonsterAttribute monsterAttribute) {
+        return switch (monsterAttribute) {
+            case NONE -> null;
+            case HIT_POINTS -> hitPoints;
+            case ATTACK -> attack;
+            case DEFENSE -> defense;
+            case SPEED -> speed;
+            case CRITICAL_RATE -> criticalRate;
+            case CRITICAL_DAMAGE -> criticalDamage;
+            case RESISTANCE -> resistance;
+            case ACCURACY -> accuracy;
+        };
+    }
 
 }
