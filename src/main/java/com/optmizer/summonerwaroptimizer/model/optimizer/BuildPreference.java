@@ -25,7 +25,7 @@ public class BuildPreference {
     private MonsterAttribute attribute;
 
     private Integer minimumValue;
-    private Integer priority;
+    private Integer maximumValue;
 
 
 }

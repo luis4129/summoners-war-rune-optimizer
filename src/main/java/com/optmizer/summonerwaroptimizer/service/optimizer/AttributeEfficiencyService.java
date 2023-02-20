@@ -35,16 +35,15 @@ public class AttributeEfficiencyService {
 
     private TreeMap<BigDecimal, RuneEfficiency> getAttributeEfficiencyTreeMap(BuildPreference buildPreference, List<RuneEfficiency> runeEfficiencies) {
         var monsterAttribute = buildPreference.getAttribute();
-        var priority = buildPreference.getPriority();
 
         return runeEfficiencies.stream().collect(Collectors.toMap(
             runeEfficiency -> runeEfficiency.getLimitedAttributeBonusValue(monsterAttribute),
             Function.identity(),
-            (rune1, rune2) -> getTheMostEfficientRune(rune1, rune2, priority),
+            this::getTheMostEfficientRune,
             TreeMap::new));
     }
 
-    private RuneEfficiency getTheMostEfficientRune(RuneEfficiency rune1, RuneEfficiency rune2, Integer priority) {
-        return rune1.getEfficiencyByPriority(priority).compareTo(rune2.getEfficiencyByPriority(priority)) > 0 ? rune1 : rune2;
+    private RuneEfficiency getTheMostEfficientRune(RuneEfficiency rune1, RuneEfficiency rune2) {
+        return rune1.getEfficiency().compareTo(rune2.getEfficiency()) > 0 ? rune1 : rune2;
     }
 }

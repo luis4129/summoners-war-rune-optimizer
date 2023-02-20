@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RuneEfficiencyRepository extends JpaRepository<RuneEfficiency, Long> {
-    List<RuneEfficiency> findByBuildStrategy_Monster_SwarfarmId_OrderByCompleteEfficiencyDesc(Long swarfarmId);
+    List<RuneEfficiency> findByBuildStrategy_Monster_SwarfarmId_OrderByEfficiencyDesc(Long swarfarmId);
 
 }
