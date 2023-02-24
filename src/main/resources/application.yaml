@@ -8,31 +8,1143 @@ spring:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
 buildStrategies:
 
-  - monster: 11965622274 #Lushen
+  - monster: 15909904554 #Talia
     priority: 1
     buildPreferences:
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: CRITICAL_RATE
-        minimumValue: 100
-      - type: WITHIN_REQUIRED_RANGE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
         attribute: SPEED
-        minimumValue: 174
+        minimumValue: 150
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 11882545446   #Sabrina
+    priority: 2
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 150
       - type: AS_HIGH_AS_POSSIBLE
         attribute: ATTACK
       - type: AS_HIGH_AS_POSSIBLE
         attribute: CRITICAL_DAMAGE
 
   - monster: 15203246381 #Kro
-    priority: 2
+    priority: 3
     buildPreferences:
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: CRITICAL_RATE
         minimumValue: 100
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: SPEED
         minimumValue: 153
-        maximumValue: 163
       - type: AS_HIGH_AS_POSSIBLE
         attribute: ATTACK
       - type: AS_HIGH_AS_POSSIBLE
         attribute: CRITICAL_DAMAGE
+
+  - monster: 13596743736 #Eirgar
+    priority: 4
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 35
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 150
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 11826116285 #Homunculus(Attack)
+    priority: 5
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 127
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 11965622274 #Lushen
+    priority: 6
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 100
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 223
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 4832219408 #Raoq
+    priority: 7
+    sets:
+      - VIOLENT
+      - FOCUS
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 145
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 58
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+
+  - monster: 7264710026 #Spectra
+    priority: 8
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: HIT_POINTS
+        maximumValue: 20000
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: DEFENSE
+        maximumValue: 1400
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 8200125778 #Sigmarus
+    priority: 9
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 155
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+
+  - monster: 7180195560 #Theomars
+    priority: 10
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 19417567650 #Rica
+    priority: 11
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 14028842097 #Bellenus
+    priority: 12
+    sets:
+      - DESPAIR
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 13304726676 #Ganymede
+    priority: 13
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 7400575165 #Verdehile
+    priority: 14
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 127
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 100
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 17826760575 #Kaki
+    priority: 15
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 150
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 35
+
+  - monster: 5708370620 #Veromos
+    priority: 16
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 55
+
+  - monster: 19711671190 #Riley
+    priority: 17
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: RESISTANCE
+        maximumValue: 100
+
+  - monster: 9988616322 #Kahli
+    priority: 18
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 58
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 180
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 14607903174 #Naomi
+    priority: 19
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 152
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 14068143793 #Loren
+    priority: 20
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: SPEED
+        minimumValue: 161
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 65
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+
+  - monster: 12230300232 #Fran
+    priority: 21
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+
+  - monster: 16410834638 #KEN
+    priority: 22
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 58
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 150
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 35
+
+  - monster: 11763924786 #Jeanne
+    priority: 23
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 25
+
+  - monster: 8850150432 #Xiong Fei
+    priority: 24
+    sets:
+      - VIOLENT
+      - REVENGE
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 180
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 65
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_RATE
+
+  - monster: 13062328308 #Amelia
+    priority: 25
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+
+  - monster: 13062328308 #Belladeon
+    priority: 26
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 35
+
+  - monster: 13062328308 #Elsharion
+    priority: 27
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_RATE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 35
+
+  - monster: 13062328308 #Skogul
+    priority: 28
+    sets:
+      - VAMPIRE
+      - NEMESIS
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: RESISTANCE
+        maximumValue: 100
+
+  - monster: 12056901304 #Megan
+    priority: 29
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 5011855680 #Mav
+    priority: 30
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 5118781246   #Bernard
+    priority: 31
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: DEFENSE
+
+  - monster: 9627171931 #Lagmaron
+    priority: 32
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 7463142066 #Kaito
+    priority: 33
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 15857733166 #Abigail
+    priority: 34
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 65
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 150
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 13656761856 #Leo
+    priority: 35
+    sets:
+      - VAMPIRE
+      - NEMESIS
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 18105439308 #Seara
+    priority: 36
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 7035793358 #Thrain
+    priority: 37
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 8278314750 #Chiwu
+    priority: 38
+    sets:
+      - SWIFT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 9808121637 #Daphnis
+    priority: 39
+    sets:
+      - WILL
+      - ANY
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 6890121876 #Garo
+    priority: 40
+    sets:
+      - VAMPIRE
+      - NEMESIS
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 8956203264 #Hwa
+    priority: 41
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 58
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 150
+
+  - monster: 19686173731 #Karnal
+    priority: 42
+    sets:
+      - DESPAIR
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 7397024453 #Lisa
+    priority: 43
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: RESISTANCE
+        minimumValue: 70
+
+  - monster: 5523267330 #Mei Hou Wang
+    priority: 44
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 9285819774 #Okeanos
+    priority: 45
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 11744859769 #Rakan
+    priority: 46
+    sets:
+      - VAMPIRE
+      - WILL
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 7713551218 #Tesarion
+    priority: 47
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 18105439303 #Vanessa
+    priority: 48
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 12091860242 #Zaiross
+    priority: 49
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 5145450236 #Ahman
+    priority: 50
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 100
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 13511648293 #Shamann
+    priority: 51
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+
+  - monster: 15777091630 #Anavel
+    priority: 52
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: HIT_POINTS
+        maximumValue: 100
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 15960529012 #Barbara
+    priority: 53
+    sets:
+      - WILL
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 9666482904 #Chandra
+    priority: 54
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 9056842964 #Galleon
+    priority: 55
+    sets:
+      - WILL
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 100
+
+  - monster: 13761642597 #Icaru
+    priority: 56
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 200
+      - type: ONLY_REQUIRED_VALUE
+        attribute: DEFENSE
+        minimumValue: 3190
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_RATE
+
+  - monster: 15892716512 #Icaru
+    priority: 57
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: DEFENSE
+        minimumValue: 3190
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_RATE
+
+  - monster: 17280366373 #Icaru
+    priority: 58
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: DEFENSE
+        minimumValue: 3190
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_RATE
+
+  - monster: 13171638130 #Psamathe
+    priority: 59
+    sets:
+      - DESPAIR
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 11289603152 #Woosa
+    priority: 60
+    sets:
+      - WILL
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+
+  - monster: 6293351032 #Xiao Lin
+    priority: 61
+    sets:
+      - VAMPIRE
+      - NEMESIS
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+
+  - monster: 19709877307 #Cheongpung
+    priority: 62
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 16518713537 #Eladriel
+    priority: 63
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: WITHIN_REQUIRED_RANGE
+        attribute: RESISTANCE
+        maximumValue: 100
+
+  - monster: 8190229396 #Ethna
+    priority: 64
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 8392275379 #Hathor
+    priority: 65
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 5346635161 #Ritesh
+    priority: 66
+    sets:
+      - VIOLENT
+      - REVENGE
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 8298496934 #Triton
+    priority: 67
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 10265639521 #Alexandra
+    priority: 68
+    sets:
+      - VIOLENT
+      - WILL
+    buildPreferences:
+      - type: ONLY_REQUIRED_VALUE
+        attribute: SPEED
+        minimumValue: 175
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 70
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL DAMAGE
+
+  - monster: 19417591064 #Masha
+    priority: 69
+    sets:
+      - WILL
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 18180448939 #Raki
+    priority: 70
+    sets:
+      - WILL
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: ATTACK
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: CRITICAL_DAMAGE
+      - type: ONLY_REQUIRED_VALUE
+        attribute: CRITICAL_RATE
+        minimumValue: 85
+
+  - monster: 17871006691 #Seth
+    priority: 71
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 17871006691 #Seth
+    priority: 72
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 18126268865 #Sagar
+    priority: 73
+    sets:
+      - VIOLENT
+      - ANY
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: SPEED
+      - type: ONLY_REQUIRED_VALUE
+        attribute: ACCURACY
+        minimumValue: 45
+
+  - monster: 9120133426 #Dias
+    priority: 74
+    buildPreferences:
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: HIT_POINTS
+      - type: AS_HIGH_AS_POSSIBLE
+        attribute: DEFENSE

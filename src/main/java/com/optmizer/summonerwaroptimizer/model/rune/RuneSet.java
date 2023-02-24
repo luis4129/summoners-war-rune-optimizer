@@ -4,6 +4,7 @@ import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
@@ -11,7 +12,7 @@ import static com.optmizer.summonerwaroptimizer.model.rune.EffectAggregationType
 
 @Getter
 @AllArgsConstructor
-public enum RuneSet {
+public enum RuneSet implements Serializable {
 
     ANY(0, MonsterAttribute.NONE, 0, NONE),
     ENERGY(2, MonsterAttribute.HIT_POINTS, 15, MULTIPLY),

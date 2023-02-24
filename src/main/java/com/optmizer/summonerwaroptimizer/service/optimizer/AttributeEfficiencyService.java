@@ -16,8 +16,8 @@ import java.util.stream.Collectors;
 @Service
 public class AttributeEfficiencyService {
 
-    public Map<BuildPreference, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>>> getAttributeEfficiencyBySlotByAttributeMap(List<BuildPreference> onlyRequiredValuePreferences, List<RuneEfficiency> runeEfficiencies) {
-        return onlyRequiredValuePreferences.stream()
+    public Map<BuildPreference, Map<Integer, TreeMap<BigDecimal, RuneEfficiency>>> getAttributeEfficiencyBySlotByAttributeMap(List<BuildPreference> limitedAttributePreferences, List<RuneEfficiency> runeEfficiencies) {
+        return limitedAttributePreferences.stream()
             .collect(Collectors.toMap(
                 Function.identity(),
                 attribute -> getAttributeEfficiencyBySlotMap(attribute, runeEfficiencies)));

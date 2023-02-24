@@ -27,5 +27,13 @@ public class BuildPreference {
     private Integer minimumValue;
     private Integer maximumValue;
 
+    public Integer getThresholdValue() {
+        return switch (type) {
+            case AS_HIGH_AS_POSSIBLE -> null;
+            case WITHIN_REQUIRED_RANGE -> maximumValue;
+            case ONLY_REQUIRED_VALUE -> minimumValue;
+        };
+    }
+
 
 }
