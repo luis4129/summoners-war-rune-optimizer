@@ -2,7 +2,6 @@ package com.optmizer.summonerwaroptimizer.service.optimizer;
 
 import com.optmizer.summonerwaroptimizer.model.monster.MonsterAttribute;
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildPreference;
-import com.optmizer.summonerwaroptimizer.model.optimizer.BuildPreferenceType;
 import com.optmizer.summonerwaroptimizer.model.optimizer.BuildStrategy;
 import com.optmizer.summonerwaroptimizer.model.rune.BonusAttribute;
 import com.optmizer.summonerwaroptimizer.repository.BuildStrategyRepository;
@@ -31,7 +30,7 @@ public class BuildStrategyService {
     public List<MonsterAttribute> getLimitedAttributes(BuildStrategy buildStrategy) {
         return buildStrategy.getBuildPreferences()
             .stream()
-            .filter(buildPreference -> buildPreference.getType().equals(BuildPreferenceType.WITHIN_REQUIRED_RANGE))
+            .filter(buildPreference -> buildPreference.getType().isLimited())
             .map(BuildPreference::getAttribute).toList();
     }
 

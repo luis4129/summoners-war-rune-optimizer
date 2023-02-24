@@ -8,10 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,11 +24,11 @@ public class RuneSetBonusService {
 
     public BigDecimal getRuneSetBonus(MonsterAttribute monsterAttribute, Integer baseValue, Build build) {
         var runeSetsThatGiveBonusToAttribute = getRuneSetWhichGiveBonusToAttribute(monsterAttribute);
-        var activeRuneSets = getActiveRuneSets(build.getRunes());
+        var activeRuneSetEffectsMultiplierMap = getEquippedRuneSetsCountMap(build.getRunes());
 
         return runeSetsThatGiveBonusToAttribute.stream()
-            .filter(activeRuneSets::contains)
-            .map(runeSet -> runeSet.calculateBonusEffect(baseValue))
+            .filter(activeRuneSetEffectsMultiplierMap::containsKey)
+            .map(runeSet -> runeSet.calculateBonusEffect(baseValue).multiply(activeRuneSetEffectsMultiplierMap.get(runeSet)))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -45,36 +44,16 @@ public class RuneSetBonusService {
     }
 
 
-    private List<RuneSet> getActiveRuneSets(List<Rune> equippedRunes) {
-        var equippedRuneSetsMap = equippedRunes.stream()
+    public Map<RuneSet, BigDecimal> getEquippedRuneSetsCountMap(List<Rune> equippedRunes) {
+        return equippedRunes.stream()
             .collect(Collectors.groupingBy(Rune::getSet))
             .entrySet()
             .stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size()));
-
-        return getActiveRuneSetsRecursively(equippedRuneSetsMap, new ArrayList<>());
-    }
-
-    private List<RuneSet> getActiveRuneSetsRecursively(Map<RuneSet, Integer> equippedRuneSetsMap, List<RuneSet> activeRuneSets) {
-        Optional<RuneSet> equippedRuneSet = equippedRuneSetsMap.keySet().stream().findFirst();
-
-        return equippedRuneSet.map(runeSet -> {
-            var unprocessedRuneCount = equippedRuneSetsMap.get(runeSet);
-            var runeSetBonusRequirement = runeSet.getRequirement();
-
-            if (unprocessedRuneCount >= runeSetBonusRequirement) {
-                activeRuneSets.add(runeSet);
-                unprocessedRuneCount -= runeSetBonusRequirement;
-                equippedRuneSetsMap.put(runeSet, unprocessedRuneCount);
-            } else {
-                equippedRuneSetsMap.remove(runeSet);
-            }
-
-            return getActiveRuneSetsRecursively(equippedRuneSetsMap, activeRuneSets);
-
-        }).orElse(activeRuneSets);
-
-
+            .collect(Collectors.toMap(Map.Entry::getKey, entry -> {
+                var runesCount = BigDecimal.valueOf(entry.getValue().size());
+                var runeRequirement = BigDecimal.valueOf(entry.getKey().getRequirement());
+                return runesCount.divide(runeRequirement, 0, RoundingMode.DOWN);
+            }));
     }
 
 }

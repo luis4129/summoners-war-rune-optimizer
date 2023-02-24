@@ -23,6 +23,7 @@ public class MainStat {
     @OneToOne
     @JsonIgnore
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Rune rune;
 
     @Column(name = "stat_value")

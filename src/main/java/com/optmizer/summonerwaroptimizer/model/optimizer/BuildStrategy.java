@@ -57,7 +57,7 @@ public class BuildStrategy {
 
     public List<MonsterAttribute> getLimitedAttributes() {
         return buildPreferences.stream()
-            .filter(buildPreference -> buildPreference.getType().equals(BuildPreferenceType.WITHIN_REQUIRED_RANGE))
+            .filter(buildPreference -> buildPreference.getType().isLimited())
             .map(BuildPreference::getAttribute).toList();
     }
 

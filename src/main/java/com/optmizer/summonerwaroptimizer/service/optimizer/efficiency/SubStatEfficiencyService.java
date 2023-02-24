@@ -72,8 +72,8 @@ public class SubStatEfficiencyService {
     private LimitedAttributeBonus getLimitedAttributeBonus(SubStat subStat, BaseMonster baseMonster) {
         var bonusAttribute = subStat.getBonusAttribute();
 
-        var fullyGrindedValue = subStat.getFullyGrindedValue();
-        var flatAttributeBonus = getFlatAttributeBonus(bonusAttribute, baseMonster, fullyGrindedValue);
+        var value = subStat.getTotalValue();
+        var flatAttributeBonus = getFlatAttributeBonus(bonusAttribute, baseMonster, BigDecimal.valueOf(value));
 
         return LimitedAttributeBonus.builder()
             .monsterAttribute(bonusAttribute.getMonsterAttribute())
