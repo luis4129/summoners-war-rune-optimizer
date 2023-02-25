@@ -118,12 +118,12 @@ buildStrategies:
       - VIOLENT
       - ANY
     buildPreferences:
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: HIT_POINTS
-        maximumValue: 20000
-      - type: WITHIN_REQUIRED_RANGE
+        minimumValue: 17250
+      - type: ONLY_REQUIRED_VALUE
         attribute: DEFENSE
-        maximumValue: 1400
+        minimumValue: 1000
       - type: ONLY_REQUIRED_VALUE
         attribute: ACCURACY
         minimumValue: 45
@@ -284,9 +284,9 @@ buildStrategies:
         attribute: HIT_POINTS
       - type: AS_HIGH_AS_POSSIBLE
         attribute: DEFENSE
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: RESISTANCE
-        maximumValue: 100
+        minimumValue: 100
 
   - monster: 9988616322 #Kahli
     priority: 18
@@ -319,9 +319,9 @@ buildStrategies:
       - VIOLENT
       - ANY
     buildPreferences:
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: SPEED
-        minimumValue: 161
+        minimumValue: 150
       - type: ONLY_REQUIRED_VALUE
         attribute: ACCURACY
         minimumValue: 65
@@ -450,9 +450,9 @@ buildStrategies:
         attribute: SPEED
       - type: AS_HIGH_AS_POSSIBLE
         attribute: HIT_POINTS
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: RESISTANCE
-        maximumValue: 100
+        minimumValue: 100
 
   - monster: 12056901304 #Megan
     priority: 29
@@ -481,10 +481,12 @@ buildStrategies:
     buildPreferences:
       - type: AS_HIGH_AS_POSSIBLE
         attribute: SPEED
-      - type: AS_HIGH_AS_POSSIBLE
+      - type: ONLY_REQUIRED_VALUE
         attribute: HIT_POINTS
-      - type: WITHIN_REQUIRED_RANGE
+        minimumValue: 20000
+      - type: ONLY_REQUIRED_VALUE
         attribute: DEFENSE
+        minimumValue: 1000
 
   - monster: 9627171931 #Lagmaron
     priority: 32
@@ -810,9 +812,9 @@ buildStrategies:
         attribute: DEFENSE
       - type: AS_HIGH_AS_POSSIBLE
         attribute: HIT_POINTS
-      - type: WITHIN_REQUIRED_RANGE
-        attribute: HIT_POINTS
-        maximumValue: 100
+      - type: ONLY_REQUIRED_VALUE
+        attribute: RESISTANCE
+        minimumValue: 100
       - type: ONLY_REQUIRED_VALUE
         attribute: ACCURACY
         minimumValue: 45
@@ -976,9 +978,9 @@ buildStrategies:
         attribute: HIT_POINTS
       - type: AS_HIGH_AS_POSSIBLE
         attribute: DEFENSE
-      - type: WITHIN_REQUIRED_RANGE
+      - type: ONLY_REQUIRED_VALUE
         attribute: RESISTANCE
-        maximumValue: 100
+        minimumValue: 100
 
   - monster: 8190229396 #Ethna
     priority: 64

@@ -27,7 +27,7 @@ public class RuneEfficiencyInitializeService {
 
         for (BuildStrategy buildStrategy : buildStrategies) {
             for (Rune rune : runes) {
-                var runeEfficiency = runeEfficiencyService.getRuneEfficiency(buildStrategy, rune);
+                var runeEfficiency = runeEfficiencyService.getRuneEfficiency(buildStrategy, rune, true);
                 runeEfficiencyService.save(runeEfficiency);
             }
         }

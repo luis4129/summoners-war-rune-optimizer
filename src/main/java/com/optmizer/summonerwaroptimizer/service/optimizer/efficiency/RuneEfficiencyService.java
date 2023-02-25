@@ -48,9 +48,9 @@ public class RuneEfficiencyService {
         //List<RuneEfficiency> findByRuneSwarfarmIdOrderByEfficiencyDesc(Long swarfarmId);
     }
 
-    public RuneEfficiency getRuneEfficiency(BuildStrategy buildStrategy, Rune rune) {
-        var runeEfficiencyRatio = getRuneEfficiencyRatio(buildStrategy, rune);
-        var maxEfficiencyRatio = getMaxEfficiencyRatio(buildStrategy, rune);
+    public RuneEfficiency getRuneEfficiency(BuildStrategy buildStrategy, Rune rune, boolean considerOnlyUnlimitedAttributes) {
+        var runeEfficiencyRatio = getRuneEfficiencyRatio(buildStrategy, rune, considerOnlyUnlimitedAttributes);
+        var maxEfficiencyRatio = getMaxEfficiencyRatio(buildStrategy, rune, considerOnlyUnlimitedAttributes);
 
         var runeEfficiencyValue = getRuneEfficiencyValue(runeEfficiencyRatio, maxEfficiencyRatio);
         var limitedAttributeBonuses = getLimitedAttributeBonuses(buildStrategy, rune);
@@ -77,35 +77,38 @@ public class RuneEfficiencyService {
     }
 
 
-    private BigDecimal getRuneEfficiencyRatio(BuildStrategy buildStrategy, Rune rune) {
+    private BigDecimal getRuneEfficiencyRatio(BuildStrategy buildStrategy, Rune rune, boolean considerOnlyUnlimitedAttributes) {
+        var efficiencyAttributes = considerOnlyUnlimitedAttributes ? buildStrategy.getUnlimitedAttributes() : buildStrategy.getUsefulAttributes();
         var requiredRuneSets = buildStrategy.getRuneSets();
-        var runeSetEfficiencyRatio = runeSetEfficiencyService.getRuneSetEfficiencyRatio(rune.getSet(), requiredRuneSets, buildStrategy.getUsefulAttributes());
+        var runeSetEfficiencyRatio = runeSetEfficiencyService.getRuneSetEfficiencyRatio(rune.getSet(), requiredRuneSets, efficiencyAttributes);
 
-        return getRuneEfficiencyRatioWithoutRuneSet(buildStrategy, rune).add(runeSetEfficiencyRatio);
+        return getRuneEfficiencyRatioWithoutRuneSet(buildStrategy, rune, considerOnlyUnlimitedAttributes).add(runeSetEfficiencyRatio);
     }
 
 
-    public BigDecimal getRuneEfficiencyRatioWithoutRuneSet(BuildStrategy buildStrategy, Rune rune) {
+    public BigDecimal getRuneEfficiencyRatioWithoutRuneSet(BuildStrategy buildStrategy, Rune rune, boolean considerOnlyUnlimitedAttributes) {
         var baseMonster = buildStrategy.getMonster().getBaseMonster();
-        var usefulAttributes = buildStrategy.getUsefulAttributesBonus();
+        var efficiencyAttributes = considerOnlyUnlimitedAttributes ? buildStrategy.getUsefulAttributesBonusBonus() : buildStrategy.getUsefulAttributesBonus();
 
-        var mainStatEfficiencyRatio = mainStatEfficiencyService.getMainStatEfficiencyRatio(baseMonster, rune.getMainStat().getBonusAttribute(), rune.getGrade(), usefulAttributes);
-        var subStatsEfficiencyRatio = subStatEfficiencyService.getSubStatEfficiencyRatio(baseMonster, rune.getSubStats(), usefulAttributes);
-        var prefixStatEfficiencyRatio = prefixStatEfficiencyService.getPrefixStatEfficiencyRatio(rune.getPrefixStat(), usefulAttributes);
+        var mainStatEfficiencyRatio = mainStatEfficiencyService.getMainStatEfficiencyRatio(baseMonster, rune.getMainStat().getBonusAttribute(), rune.getGrade(), efficiencyAttributes);
+        var subStatsEfficiencyRatio = subStatEfficiencyService.getSubStatEfficiencyRatio(baseMonster, rune.getSubStats(), efficiencyAttributes);
+        var prefixStatEfficiencyRatio = prefixStatEfficiencyService.getPrefixStatEfficiencyRatio(rune.getPrefixStat(), efficiencyAttributes);
 
         return mainStatEfficiencyRatio.add(subStatsEfficiencyRatio).add(prefixStatEfficiencyRatio);
     }
 
-    private BigDecimal getMaxEfficiencyRatio(BuildStrategy buildStrategy, Rune rune) {
-        var maxRuneSetEfficiencyRatio = runeSetEfficiencyService.getMaxRuneSetEfficiency(rune.getSet().getRequirement(), buildStrategy.getRuneSets(), buildStrategy.getUsefulAttributes());
+    private BigDecimal getMaxEfficiencyRatio(BuildStrategy buildStrategy, Rune rune, boolean considerOnlyUnlimitedAttributes) {
+        var efficiencyAttributes = considerOnlyUnlimitedAttributes ? buildStrategy.getUnlimitedAttributes() : buildStrategy.getUsefulAttributes();
+        var maxRuneSetEfficiencyRatio = runeSetEfficiencyService.getMaxRuneSetEfficiency(rune.getSet().getRequirement(), buildStrategy.getRuneSets(), efficiencyAttributes);
 
-        return getMaxEfficiencyRatioWithoutRuneSet(buildStrategy, rune).add(maxRuneSetEfficiencyRatio);
+        return getMaxEfficiencyRatioWithoutRuneSet(buildStrategy, rune, considerOnlyUnlimitedAttributes).add(maxRuneSetEfficiencyRatio);
     }
 
-    public BigDecimal getMaxEfficiencyRatioWithoutRuneSet(BuildStrategy buildStrategy, Rune rune) {
+    public BigDecimal getMaxEfficiencyRatioWithoutRuneSet(BuildStrategy buildStrategy, Rune rune, boolean considerOnlyUnlimitedAttributes) {
+        var efficiencyAttributes = considerOnlyUnlimitedAttributes ? buildStrategy.getUsefulAttributesBonusBonus() : buildStrategy.getUsefulAttributesBonus();
         var slot = rune.getSlot();
         var baseMonster = buildStrategy.getMonster().getBaseMonster();
-        var remainingAttributes = new ArrayList<>(buildStrategy.getUsefulAttributesBonus());
+        var remainingAttributes = new ArrayList<>(efficiencyAttributes);
 
         var maxMainStatEfficiencyRatio = mainStatEfficiencyService.getMaxMainStatFromSlot(baseMonster, slot, remainingAttributes);
         var maxSubStatsEfficiencyRatio = subStatEfficiencyService.getMaxEfficiencyRatio(baseMonster, slot, remainingAttributes);

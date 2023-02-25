@@ -55,7 +55,7 @@ public class BuildEfficiencyService {
         var equippedRuneSetsCountMap = runeSetBonusService.getEquippedRuneSetsCountMap(runes);
 
         var runesEfficiency = runes.stream()
-            .map(rune -> runeEfficiencyService.getRuneEfficiencyRatioWithoutRuneSet(buildStrategy, rune))
+            .map(rune -> runeEfficiencyService.getRuneEfficiencyRatioWithoutRuneSet(buildStrategy, rune, false))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         var runeSetEfficiency = getRuneSetEfficiencyRatio(buildStrategy, equippedRuneSetsCountMap);
         var runeExcessValueRatio = getExcessEfficiencyRatio(buildStrategy, runes);
@@ -65,7 +65,7 @@ public class BuildEfficiencyService {
 
     private BigDecimal getBuildMaxEfficiencyRatio(BuildStrategy buildStrategy, List<Rune> runes) {
         var maxRunesEfficiencyRatio = runes.stream()
-            .map(rune -> runeEfficiencyService.getMaxEfficiencyRatioWithoutRuneSet(buildStrategy, rune))
+            .map(rune -> runeEfficiencyService.getMaxEfficiencyRatioWithoutRuneSet(buildStrategy, rune, false))
             .reduce(BigDecimal.ZERO, BigDecimal::add);
         var maxRuneSetEfficiencyRatio = getRuneSetMaxEfficiencyRatio(buildStrategy);
 

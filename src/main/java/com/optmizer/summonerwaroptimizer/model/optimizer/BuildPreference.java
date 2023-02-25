@@ -30,7 +30,7 @@ public class BuildPreference {
     public Integer getThresholdValue() {
         return switch (type) {
             case AS_HIGH_AS_POSSIBLE -> null;
-            case WITHIN_REQUIRED_RANGE -> maximumValue;
+            case UP_TO_MAXIMUM_VALUE -> maximumValue;
             case ONLY_REQUIRED_VALUE -> minimumValue;
         };
     }
