@@ -8,7 +8,7 @@ import lombok.Getter;
 public enum BuildPreferenceType {
 
     AS_HIGH_AS_POSSIBLE(false),
-    WITHIN_REQUIRED_RANGE(true),
+    UP_TO_MAXIMUM_VALUE(true),
     ONLY_REQUIRED_VALUE(true);
 
     private boolean isLimited;

@@ -128,10 +128,18 @@ public class OptimizerService {
             .map(currentRunes -> Build.builder().runes(currentRunes).efficiency(buildEfficiencyService.getBuildEfficiency(buildStrategy, currentRunes)).build())
             .collect(Collectors.groupingBy(build -> isAboveMinimumValueRequirements(build, buildStrategy)));
 
-        return bestBuildOfEachRuneSetCombination.getOrDefault(BUILDS_ABOVE_MINIMUM_REQUIRED_VALUES, bestBuildOfEachRuneSetCombination.getOrDefault(BUILDS_NOT_ABOVE_MINIMUM_REQUIRED_VALUES, Collections.emptyList()))
-            .stream()
-            .max(Comparator.comparing(Build::getEfficiency))
-            .orElseThrow(NoPossibleBuildException::new);
+        if (bestBuildOfEachRuneSetCombination.containsKey(BUILDS_ABOVE_MINIMUM_REQUIRED_VALUES)) {
+            return bestBuildOfEachRuneSetCombination.get(BUILDS_ABOVE_MINIMUM_REQUIRED_VALUES)
+                .stream()
+                .max(Comparator.comparing(Build::getEfficiency))
+                .orElseThrow(NoPossibleBuildException::new);
+        } else if (bestBuildOfEachRuneSetCombination.containsKey(BUILDS_NOT_ABOVE_MINIMUM_REQUIRED_VALUES)) {
+            return bestBuildOfEachRuneSetCombination.get(BUILDS_NOT_ABOVE_MINIMUM_REQUIRED_VALUES)
+                .stream()
+                .max(Comparator.comparing(build -> howCloseToMinimumRequirements(build, buildStrategy)))
+                .orElseThrow(NoPossibleBuildException::new);
+        } else
+            throw new NoPossibleBuildException();
     }
 
     private boolean isAboveMinimumValueRequirements(Build build, BuildStrategy buildStrategy) {
@@ -140,6 +148,24 @@ public class OptimizerService {
             .stream()
             .filter(buildPreference -> Objects.nonNull(buildPreference.getMinimumValue()))
             .allMatch(buildPreference -> monsterStats.getAttributeValue(buildPreference.getAttribute()) >= buildPreference.getMinimumValue());
+    }
+
+    private BigDecimal howCloseToMinimumRequirements(Build build, BuildStrategy buildStrategy) {
+        var monsterStats = monsterBuildService.getMonsterStats(buildStrategy.getMonster().getBaseMonster(), build);
+        var minimumValuePreferences = buildStrategy.getBuildPreferences()
+            .stream()
+            .filter(buildPreference -> Objects.nonNull(buildPreference.getMinimumValue()))
+            .toList();
+
+        return minimumValuePreferences.stream()
+            .map(buildPreference -> {
+                var attributeValue = BigDecimal.valueOf(monsterStats.getAttributeValue(buildPreference.getAttribute()));
+                var minimumValue = BigDecimal.valueOf(buildPreference.getMinimumValue());
+                var maxEfficiency = BigDecimal.ONE;
+                return attributeValue.divide(minimumValue, 4, RoundingMode.DOWN).min(maxEfficiency);
+            })
+            .reduce(BigDecimal.ZERO, BigDecimal::add)
+            .divide(BigDecimal.valueOf(minimumValuePreferences.size()), 4, RoundingMode.DOWN);
     }
 
     private Map<Integer, RuneEfficiency> getMostEfficientRunesWithRequiredSetsAndAttributes(Map<Integer, List<RuneEfficiency>> slotRuneEfficiencies, BaseMonster baseMonster, List<RuneSet> requiredRuneSets,

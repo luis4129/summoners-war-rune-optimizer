@@ -55,6 +55,23 @@ public class BuildStrategy {
 
     }
 
+    public List<MonsterAttribute> getUnlimitedAttributes() {
+        return buildPreferences.stream()
+            .filter(preference -> !preference.getType().isLimited())
+            .map(BuildPreference::getAttribute)
+            .toList();
+    }
+
+    public List<BonusAttribute> getUsefulAttributesBonusBonus() {
+        return buildPreferences.stream()
+            .filter(preference -> !preference.getType().isLimited())
+            .map(BuildPreference::getAttribute)
+            .map(monsterAttribute -> Stream.of(BonusAttribute.values()).filter(bonusAttribute -> bonusAttribute.getMonsterAttribute().equals(monsterAttribute)).toList())
+            .flatMap(Collection::stream)
+            .toList();
+
+    }
+
     public List<MonsterAttribute> getLimitedAttributes() {
         return buildPreferences.stream()
             .filter(buildPreference -> buildPreference.getType().isLimited())
